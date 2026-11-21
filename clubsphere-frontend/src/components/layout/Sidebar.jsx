@@ -21,6 +21,11 @@ import {
   Dumbbell,
   Calendar,
   MessageSquare,
+  TrendingDown,
+  FileText,
+  ShieldCheck,
+  Bell,
+  Receipt,
 } from 'lucide-react';
 
 export const Sidebar = () => {
@@ -99,6 +104,26 @@ export const Sidebar = () => {
             <NavLink to="/admin/integration-demo" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}>
               <Share2 size={18} /> Team Integrations
             </NavLink>
+
+            <div className="nav-section-title">Finance & Accounts</div>
+            <NavLink to="/admin/finance" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}>
+              <DollarSign size={18} /> Finance Dashboard
+            </NavLink>
+            <NavLink to="/admin/payments" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}>
+              <CreditCard size={18} /> Payment Tracking
+            </NavLink>
+            <NavLink to="/admin/expenses" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}>
+              <TrendingDown size={18} /> Operating Expenses
+            </NavLink>
+            <NavLink to="/admin/finance-reports" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}>
+              <FileText size={18} /> 12 Financial Reports
+            </NavLink>
+            <NavLink to="/admin/reconciliation" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}>
+              <ShieldCheck size={18} /> Reconciliation
+            </NavLink>
+            <NavLink to="/notifications" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}>
+              <Bell size={18} /> Notification Hub
+            </NavLink>
           </>
         )}
 
@@ -128,6 +153,9 @@ export const Sidebar = () => {
             <NavLink to="/staff/bookings" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}>
               <Calendar size={18} /> Court Bookings Ledger
             </NavLink>
+            <NavLink to="/notifications" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}>
+              <Bell size={18} /> Notifications
+            </NavLink>
           </>
         )}
 
@@ -149,6 +177,12 @@ export const Sidebar = () => {
             </NavLink>
             <NavLink to="/member/qr-card" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}>
               <QrCode size={18} /> QR Membership Card
+            </NavLink>
+            <NavLink to="/member/payments" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}>
+              <Receipt size={18} /> My Payments & Receipts
+            </NavLink>
+            <NavLink to="/notifications" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}>
+              <Bell size={18} /> Notifications
             </NavLink>
 
             <div className="nav-section-title">Sports & Courts</div>

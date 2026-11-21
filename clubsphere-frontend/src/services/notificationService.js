@@ -1,8 +1,8 @@
 import api from './api';
 
 export const notificationService = {
-  getMyNotifications: async () => {
-    const res = await api.get('/notifications');
+  getMyNotifications: async (params = {}) => {
+    const res = await api.get('/notifications', { params });
     return res.data;
   },
 
@@ -16,8 +16,25 @@ export const notificationService = {
     return res.data;
   },
 
-  getUnreadCount: async () => {
-    const res = await api.get('/notifications/unread-count');
+  dismissNotification: async (id) => {
+    const res = await api.delete(`/notifications/${id}`);
+    return res.data;
+  },
+
+  clearReadNotifications: async () => {
+    const res = await api.delete('/notifications/clear-read');
+    return res.data;
+  },
+
+  broadcastNotification: async (data) => {
+    const res = await api.post('/notifications/broadcast', null, { params: data });
+    return res.data;
+  },
+
+  triggerDemoExpiryCheck: async () => {
+    const res = await api.post('/notifications/trigger-demo-expiry-check');
     return res.data;
   },
 };
+
+export default notificationService;

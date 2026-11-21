@@ -134,6 +134,9 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.POST, "/api/bookings").permitAll()
                 .requestMatchers("/api/bookings/**").authenticated()
                 .requestMatchers("/api/courts/**").hasRole("ADMIN")
+                // Finance & Accounting
+                .requestMatchers("/api/finance/my-payments").authenticated()
+                .requestMatchers("/api/finance/**").hasAnyRole("ADMIN", "STAFF")
                 .anyRequest().authenticated()
             );
 

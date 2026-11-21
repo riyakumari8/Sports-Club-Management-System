@@ -13,6 +13,8 @@ import java.util.Optional;
 public interface UserRepository extends JpaRepository<User, Long> {
     Optional<User> findByEmail(String email);
     Boolean existsByEmail(String email);
+    List<User> findByRoles_Name(com.clubsphere.modules.user.entity.ERole name);
+    List<User> findByTrialStatus(String trialStatus);
 
     @Query("SELECT u FROM User u WHERE " +
            "(CAST(:query AS String) IS NULL OR LOWER(u.fullName) LIKE LOWER(CONCAT('%', CAST(:query AS String), '%')) OR " +

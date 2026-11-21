@@ -167,17 +167,48 @@ All accounts are pre-seeded in the database with BCrypt-hashed passwords for imm
   ```
 - Members upgrading (e.g., from Silver to Gold) have their prior active record transitioned to `SUPERSEDED` status, preserving complete audit trails.
 
-### 4.5. In-App Centralized Notifications
-- Real-time notification bell icon in top navbar (`Navbar.jsx`).
-- Dynamic unread count badge counter.
-- Interactive popover listing notifications with category badges (`BOOKING`, `MEMBERSHIP`, `TRIAL`, `SYSTEM`).
-- Single-click "Mark all read" and individual mark-as-read updates.
-- Automated notification triggers upon student signup, free trial activation, court booking confirmation, and membership upgrades.
+### 4.5. Centralized Alert and Notification Management System (`/notifications`)
+- Centralized notification tray accessible from the Navbar bell and dedicated page `/notifications`.
+- Filter alerts across tabs: `All`, `Unread`, `Read`, with category filtering (`FINANCE`, `MEMBERSHIP`, `BOOKING`, `TRIAL`, `SYSTEM`) and severity (`CRITICAL`, `HIGH`, `MEDIUM`, `INFO`).
+- Single-click action routing: direct jump to `/member/payments`, `/member/my-bookings`, or `/admin/finance`.
+- Spring Boot `@Scheduled` daily task (`ScheduledTasks.java`) checking trial deadlines and sending automated membership renewal reminders at 7, 3, and 1 days before expiry.
+- Manual trigger button on `/notifications`: **"Run Expiry Reminders Engine (Demo)"** allows evaluators to simulate the scheduled midnight expiry engine on demand.
 
 ### 4.6. Pro Shop & Sports Cafe (`/shops`)
 - **Pro Sports Shop Tab:** 25 catalog items (Tennis racquets, badminton gear, footwear, apparel, accessories) with regular and discounted member prices.
 - **Club Cafe Tab:** 15 healthy dining items (Protein shakes, acai bowls, sandwiches, beverages) with nutritional calorie counts.
 - **Order Simulator Modal:** Interactive checkout popup allowing evaluators to simulate ordering for demo verification.
+
+### 4.7. Finance, Accounting, Payment Tracking and Reports (Section 20)
+- **Finance Dashboard (`/admin/finance`):**
+  - Live calculations from database transactions: Total Recognized Revenue, Today's Revenue, Monthly Revenue, Operating Expenses, Net Operating Profit, Pending Payments, Completed Payments, Failed Payments, and Refunds.
+  - Period filter buttons: `Today`, `This Week`, `This Month`, `This Year`, and `Custom Date Range`.
+  - Visual breakdown cards: Revenue by Module (Membership, Court Booking, Sports Shop, Cafe), Collections by Payment Method (UPI, Cash, Card, Net Banking), Operating Expenses by Category.
+  - Recent transactions stream and real-time audit alerts.
+- **Unified Payment Tracking Ledger (`/admin/payments`):**
+  - Unified tracking across 6 sources: Membership Purchases, Renewals, Upgrades, Court Bookings, Pro Sports Shop, and Club Cafe.
+  - Search by payment reference, transaction ID, payer name, or notes.
+  - Multi-criteria filters: Source module, payment method, status, date range.
+  - Transaction Record Details Modal with complete service breakdown.
+  - Customer Refund Processing Modal: issue full or partial refund with audit logging.
+  - **"Simulate Demo Payment"** action button for evaluation viva demonstration.
+  - One-click CSV export of filtered ledger items.
+- **Operational Expense Management (`/admin/expenses`):**
+  - Full CRUD operations across 7 operational categories: Staff Salary, Equipment, Maintenance, Utilities, Inventory, Events, and Other.
+  - Add and edit expense modals with validation, disbursement dates, payment modes, and vendor tracking.
+  - Audit logs and administrator alerts triggered on expense operations.
+- **12 Distinct Financial Accounting Reports (`/admin/finance-reports`):**
+  - Generates 12 individual audit reports: Statement of Profit and Loss (P&L), Daily Revenue, Weekly Revenue, Monthly Revenue, Yearly Revenue, Membership Subscriptions, Court Bookings & Green Fees, Pro Shop Sales, Club Cafe Sales, Comprehensive Expenses, Outstanding Payments, and Customer Refunds.
+  - Aggregated KPI cards, date range filtering, detailed transaction table.
+  - Export to CSV and print-ready PDF view (`window.print()`).
+- **Payment Reconciliation & Cash Audit (`/admin/reconciliation`):**
+  - Daily settlement protocol auditing Online settlements vs Front desk cash receipts vs Refunds deducted.
+  - Front Desk Cash Drawer Audit Table: logs cashier staff employee ID and timestamp for every cash receipt.
+  - Discrepancy & Unreconciled Review Queue for reviewing dropped or disputed payments.
+  - "Run Balance Verification" one-click cashier settlement check.
+- **Student Payment History & Digital Receipts (`/member/payments`):**
+  - Strict Authorization: Student accesses only their personal payment records; no club revenue or profit figures are exposed.
+  - Official printable Tax Invoice / Receipt modal with ClubSphere GSTIN header, transaction details, amount breakdown, refund credit, and verification QR code.
 
 ---
 

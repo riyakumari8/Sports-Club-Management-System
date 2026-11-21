@@ -57,6 +57,15 @@ import { AdminAllBookingsPage } from '../pages/admin/AdminAllBookingsPage';
 import { FrontDeskCheckInPage } from '../pages/admin/FrontDeskCheckInPage';
 import { EnquiryCRMPage } from '../pages/admin/EnquiryCRMPage';
 
+// Finance & Notification Pages
+import { FinanceDashboardPage } from '../pages/admin/FinanceDashboardPage';
+import { PaymentTrackingPage } from '../pages/admin/PaymentTrackingPage';
+import { ExpenseManagementPage } from '../pages/admin/ExpenseManagementPage';
+import { FinancialReportsPage } from '../pages/admin/FinancialReportsPage';
+import { PaymentReconciliationPage } from '../pages/admin/PaymentReconciliationPage';
+import { NotificationsPage } from '../pages/common/NotificationsPage';
+import { MyPaymentsPage } from '../pages/member/MyPaymentsPage';
+
 // Protected Route Guard
 const ProtectedRoute = ({ children, allowedRoles }) => {
   const { isAuthenticated, roles, loading } = useAuth();
@@ -254,6 +263,14 @@ export const AppRoutes = () => {
           </ProtectedRoute>
         }
       />
+      <Route
+        path="/member/payments"
+        element={
+          <ProtectedRoute allowedRoles={['ROLE_MEMBER', 'ROLE_ADMIN']}>
+            <MyPaymentsPage />
+          </ProtectedRoute>
+        }
+      />
 
       {/* Member Court Routes */}
       <Route
@@ -319,6 +336,58 @@ export const AppRoutes = () => {
         element={
           <ProtectedRoute allowedRoles={['ROLE_ADMIN']}>
             <EnquiryCRMPage />
+          </ProtectedRoute>
+        }
+      />
+
+      {/* Finance & Accounting Routes */}
+      <Route
+        path="/admin/finance"
+        element={
+          <ProtectedRoute allowedRoles={['ROLE_ADMIN', 'ROLE_STAFF']}>
+            <FinanceDashboardPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/admin/payments"
+        element={
+          <ProtectedRoute allowedRoles={['ROLE_ADMIN', 'ROLE_STAFF']}>
+            <PaymentTrackingPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/admin/expenses"
+        element={
+          <ProtectedRoute allowedRoles={['ROLE_ADMIN', 'ROLE_STAFF']}>
+            <ExpenseManagementPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/admin/finance-reports"
+        element={
+          <ProtectedRoute allowedRoles={['ROLE_ADMIN', 'ROLE_STAFF']}>
+            <FinancialReportsPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/admin/reconciliation"
+        element={
+          <ProtectedRoute allowedRoles={['ROLE_ADMIN', 'ROLE_STAFF']}>
+            <PaymentReconciliationPage />
+          </ProtectedRoute>
+        }
+      />
+
+      {/* Centralized Notifications Hub */}
+      <Route
+        path="/notifications"
+        element={
+          <ProtectedRoute allowedRoles={['ROLE_ADMIN', 'ROLE_STAFF', 'ROLE_MEMBER']}>
+            <NotificationsPage />
           </ProtectedRoute>
         }
       />

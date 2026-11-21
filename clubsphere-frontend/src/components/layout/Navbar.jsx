@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { notificationService } from '../../services/notificationService';
 import {
@@ -23,10 +24,10 @@ export const Navbar = ({ title, subtitle }) => {
   // Fetch unread count & notifications
   const loadNotifications = async () => {
     try {
-      const [count, list] = await Promise.all([
-        notificationService.getUnreadCount(),
-        notificationService.getMyNotifications(),
-      ]);
+      const res = await notificationService.getMyNotifications();
+      const payload = res?.data || res || {};
+      const list = payload.notifications || (Array.isArray(payload) ? payload : []);
+      const count = payload.unreadCount ?? (list.filter((n) => !n.isRead).length);
       setUnreadCount(count || 0);
       setNotifications(Array.isArray(list) ? list : []);
     } catch {
@@ -244,6 +245,31 @@ export const Navbar = ({ title, subtitle }) => {
                     </div>
                   ))
                 )}
+              </div>
+
+              {/* Dropdown Footer */}
+              <div style={{
+                padding: '0.75rem 1rem',
+                backgroundColor: '#f8faf9',
+                borderTop: '1px solid #e5e7eb',
+                textAlign: 'center',
+              }}>
+                <Link
+                  to="/notifications"
+                  onClick={() => setDropdownOpen(false)}
+                  style={{
+                    fontSize: '0.82rem',
+                    fontWeight: 700,
+                    color: '#0F5132',
+                    textDecoration: 'none',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: '6px',
+                  }}
+                >
+                  View All Notifications <ExternalLink size={13} />
+                </Link>
               </div>
             </div>
           )}
