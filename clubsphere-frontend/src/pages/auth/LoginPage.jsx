@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate, Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
-import { Shield, Lock, Mail, ArrowRight, AlertCircle, Sparkles, UserCheck, LockKeyhole } from 'lucide-react';
+import { Shield, Lock, Mail, ArrowRight, AlertCircle, UserCheck, LockKeyhole } from 'lucide-react';
 
 export const LoginPage = () => {
   const { login } = useAuth();
@@ -42,11 +42,6 @@ export const LoginPage = () => {
     } finally {
       setLoading(false);
     }
-  };
-
-  const fillQuickDemo = (email, password) => {
-    setFormData({ email, password });
-    setError('');
   };
 
   return (
@@ -214,36 +209,6 @@ export const LoginPage = () => {
             <ArrowRight size={18} />
           </button>
         </form>
-
-        {/* Quick Demo Shortcuts for Student Evaluation */}
-        <div style={{ marginTop: '1.75rem', paddingTop: '1.25rem', borderTop: '1px dashed #e5e7eb' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.72rem', fontWeight: 800, color: '#4b5563', textTransform: 'uppercase', marginBottom: '0.75rem' }}>
-            <Sparkles size={14} color="#D4AF37" /> Evaluator Quick-Fill Accounts:
-          </div>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '0.5rem' }}>
-            <button
-              type="button"
-              onClick={() => fillQuickDemo('vikram.singh@example.com', 'Member@123')}
-              style={{ padding: '0.45rem', fontSize: '0.75rem', fontWeight: 700, backgroundColor: '#fef3c7', color: '#b45309', border: '1px solid #fde68a', borderRadius: '6px', cursor: 'pointer' }}
-            >
-              Gold Member
-            </button>
-            <button
-              type="button"
-              onClick={() => fillQuickDemo('kavya.nair@example.com', 'Member@123')}
-              style={{ padding: '0.45rem', fontSize: '0.75rem', fontWeight: 700, backgroundColor: '#f0fdf4', color: '#166534', border: '1px solid #bbf7d0', borderRadius: '6px', cursor: 'pointer' }}
-            >
-              Trial User
-            </button>
-            <button
-              type="button"
-              onClick={() => fillQuickDemo('manish.kumar@example.com', 'Member@123')}
-              style={{ padding: '0.45rem', fontSize: '0.75rem', fontWeight: 700, backgroundColor: '#fee2e2', color: '#991b1b', border: '1px solid #fca5a5', borderRadius: '6px', cursor: 'pointer' }}
-            >
-              Expired Plan
-            </button>
-          </div>
-        </div>
 
         {/* Join CTA */}
         <div style={{ textAlign: 'center', marginTop: '1.5rem', fontSize: '0.88rem', color: '#6b7280' }}>
