@@ -38,6 +38,16 @@ import { DailyAttendancePage } from '../pages/staff/DailyAttendancePage';
 import { ApplyLeavePage } from '../pages/staff/ApplyLeavePage';
 import { ShiftSchedulePage } from '../pages/staff/ShiftSchedulePage';
 
+// Court & Operations Pages (Converted to Emerald Green UI)
+import { BookCourtPage } from '../pages/member/BookCourtPage';
+import { CourtAvailabilityPage } from '../pages/member/CourtAvailabilityPage';
+import { MyCourtBookingsPage } from '../pages/member/MyCourtBookingsPage';
+import { SocialPlayPage } from '../pages/member/SocialPlayPage';
+import { AdminCourtsPage } from '../pages/admin/AdminCourtsPage';
+import { AdminAllBookingsPage } from '../pages/admin/AdminAllBookingsPage';
+import { FrontDeskCheckInPage } from '../pages/admin/FrontDeskCheckInPage';
+import { EnquiryCRMPage } from '../pages/admin/EnquiryCRMPage';
+
 // Protected Route Guard
 const ProtectedRoute = ({ children, allowedRoles }) => {
   const { isAuthenticated, roles, loading } = useAuth();
@@ -216,6 +226,74 @@ export const AppRoutes = () => {
         }
       />
 
+      {/* Member Court Routes */}
+      <Route
+        path="/member/book-court"
+        element={
+          <ProtectedRoute allowedRoles={['ROLE_MEMBER', 'ROLE_ADMIN']}>
+            <BookCourtPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/member/court-availability"
+        element={
+          <ProtectedRoute allowedRoles={['ROLE_MEMBER', 'ROLE_ADMIN']}>
+            <CourtAvailabilityPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/member/my-bookings"
+        element={
+          <ProtectedRoute allowedRoles={['ROLE_MEMBER', 'ROLE_ADMIN']}>
+            <MyCourtBookingsPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/member/social-play"
+        element={
+          <ProtectedRoute allowedRoles={['ROLE_MEMBER', 'ROLE_ADMIN']}>
+            <SocialPlayPage />
+          </ProtectedRoute>
+        }
+      />
+
+      {/* Admin Court Routes */}
+      <Route
+        path="/admin/courts"
+        element={
+          <ProtectedRoute allowedRoles={['ROLE_ADMIN']}>
+            <AdminCourtsPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/admin/bookings"
+        element={
+          <ProtectedRoute allowedRoles={['ROLE_ADMIN']}>
+            <AdminAllBookingsPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/admin/check-in"
+        element={
+          <ProtectedRoute allowedRoles={['ROLE_ADMIN', 'ROLE_STAFF']}>
+            <FrontDeskCheckInPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/admin/enquiries"
+        element={
+          <ProtectedRoute allowedRoles={['ROLE_ADMIN']}>
+            <EnquiryCRMPage />
+          </ProtectedRoute>
+        }
+      />
+
       {/* Staff Routes */}
       <Route
         path="/staff/dashboard"
@@ -254,6 +332,22 @@ export const AppRoutes = () => {
         element={
           <ProtectedRoute allowedRoles={['ROLE_STAFF', 'ROLE_ADMIN']}>
             <ShiftSchedulePage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/staff/check-in"
+        element={
+          <ProtectedRoute allowedRoles={['ROLE_STAFF', 'ROLE_ADMIN']}>
+            <FrontDeskCheckInPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/staff/bookings"
+        element={
+          <ProtectedRoute allowedRoles={['ROLE_STAFF', 'ROLE_ADMIN']}>
+            <AdminAllBookingsPage />
           </ProtectedRoute>
         }
       />

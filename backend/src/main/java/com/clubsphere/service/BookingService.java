@@ -70,9 +70,12 @@ public class BookingService {
         OffsetDateTime dayEnd = date.plusDays(1).atStartOfDay(zone).toOffsetDateTime();
         List<CourtMaintenance> maintenances = maintenanceRepository.findOverlappingMaintenance(courtId, dayStart, dayEnd);
 
-        List<SlotAvailabilityDTO> slots = new ArrayList<>();
         LocalTime opening = court.getOpeningTime();
         LocalTime closing = court.getClosingTime();
+        if (closing == null || opening == null || closing.isBefore(opening)) {
+            opening = LocalTime.of(6, 0);
+            closing = LocalTime.of(22, 0);
+        }
 
         LocalTime currentSlotStart = opening;
         LocalDate today = LocalDate.now();

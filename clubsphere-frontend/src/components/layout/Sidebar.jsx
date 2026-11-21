@@ -18,6 +18,9 @@ import {
   Briefcase,
   User,
   Share2,
+  Dumbbell,
+  Calendar,
+  MessageSquare,
 } from 'lucide-react';
 
 export const Sidebar = () => {
@@ -78,6 +81,20 @@ export const Sidebar = () => {
               <DollarSign size={18} /> Salary Records
             </NavLink>
 
+            <div className="nav-section-title">Court & Operations</div>
+            <NavLink to="/admin/courts" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}>
+              <Dumbbell size={18} /> Court Management
+            </NavLink>
+            <NavLink to="/admin/bookings" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}>
+              <Calendar size={18} /> All Bookings
+            </NavLink>
+            <NavLink to="/admin/check-in" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}>
+              <QrCode size={18} /> Front Desk Check-In
+            </NavLink>
+            <NavLink to="/admin/enquiries" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}>
+              <MessageSquare size={18} /> Enquiry CRM
+            </NavLink>
+
             <div className="nav-section-title">Integration Hub</div>
             <NavLink to="/admin/integration-demo" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}>
               <Share2 size={18} /> Team Integrations
@@ -104,6 +121,13 @@ export const Sidebar = () => {
             <NavLink to="/staff/shifts" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}>
               <Clock size={18} /> My Shifts
             </NavLink>
+            <div className="nav-section-title">Court Duty</div>
+            <NavLink to="/staff/check-in" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}>
+              <QrCode size={18} /> Gate & Turnstile Check-In
+            </NavLink>
+            <NavLink to="/staff/bookings" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}>
+              <Calendar size={18} /> Court Bookings Ledger
+            </NavLink>
           </>
         )}
 
@@ -125,6 +149,20 @@ export const Sidebar = () => {
             </NavLink>
             <NavLink to="/member/qr-card" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}>
               <QrCode size={18} /> QR Membership Card
+            </NavLink>
+
+            <div className="nav-section-title">Sports & Courts</div>
+            <NavLink to="/member/book-court" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}>
+              <Dumbbell size={18} /> Reserve a Court
+            </NavLink>
+            <NavLink to="/member/court-availability" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}>
+              <Clock size={18} /> Court Availability
+            </NavLink>
+            <NavLink to="/member/my-bookings" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}>
+              <Calendar size={18} /> My Court Bookings
+            </NavLink>
+            <NavLink to="/member/social-play" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}>
+              <Users size={18} /> Friday Social Play
             </NavLink>
           </>
         )}

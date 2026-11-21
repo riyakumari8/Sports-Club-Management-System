@@ -121,6 +121,15 @@ public class SecurityConfig {
                 .requestMatchers("/api/memberships/my", "/api/memberships/register", "/api/memberships/*/renew", "/api/memberships/*/card").authenticated()
                 .requestMatchers("/api/memberships/dashboard", "/api/memberships/all", "/api/memberships/verify/**").hasAnyRole("ADMIN", "STAFF")
                 .requestMatchers("/api/memberships/**").hasRole("ADMIN")
+                // Court & Booking Management (Swathi's Module)
+                .requestMatchers("/api/public/**").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/courts/**").permitAll()
+                .requestMatchers("/api/enquiries/**", "/api/trial-bookings/**").permitAll()
+                .requestMatchers("/api/social-play/**").permitAll()
+                .requestMatchers("/api/bookings/check-in", "/api/bookings/*/check-in").hasAnyRole("ADMIN", "STAFF")
+                .requestMatchers(HttpMethod.POST, "/api/bookings").permitAll()
+                .requestMatchers("/api/bookings/**").authenticated()
+                .requestMatchers("/api/courts/**").hasRole("ADMIN")
                 .anyRequest().authenticated()
             );
 
