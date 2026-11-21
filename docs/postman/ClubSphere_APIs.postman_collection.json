@@ -1,0 +1,265 @@
+{
+  "info": {
+    "name": "ClubSphere - Sports Club Management APIs",
+    "description": "Complete Postman collection for Riya's assigned modules: Authentication, User Management, Membership, and Staff Management, plus Team Integration APIs for Swathi, Balaji, and Anish.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8080/api",
+      "type": "string"
+    },
+    {
+      "key": "token",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "1. Authentication",
+      "item": [
+        {
+          "name": "Login (Admin)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"admin@clubsphere.com\",\n  \"password\": \"Admin@123\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/auth/login", "host": ["{{baseUrl}}"], "path": ["auth", "login"] }
+          }
+        },
+        {
+          "name": "Login (Staff)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"coach.rahul@clubsphere.com\",\n  \"password\": \"Staff@123\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/auth/login", "host": ["{{baseUrl}}"], "path": ["auth", "login"] }
+          }
+        },
+        {
+          "name": "Login (Member)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"vikram.singh@example.com\",\n  \"password\": \"Member@123\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/auth/login", "host": ["{{baseUrl}}"], "path": ["auth", "login"] }
+          }
+        },
+        {
+          "name": "Register New Member",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"fullName\": \"Ananya Patel\",\n  \"email\": \"ananya.patel@example.com\",\n  \"phone\": \"+91 9822334455\",\n  \"password\": \"Member@123\",\n  \"confirmPassword\": \"Member@123\",\n  \"dateOfBirth\": \"1998-05-14\",\n  \"address\": \"45 Park Street, Kolkata\",\n  \"gender\": \"Female\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/auth/register", "host": ["{{baseUrl}}"], "path": ["auth", "register"] }
+          }
+        },
+        {
+          "name": "Get Current Session User (/me)",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{baseUrl}}/auth/me", "host": ["{{baseUrl}}"], "path": ["auth", "me"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "2. User Management (Admin)",
+      "item": [
+        {
+          "name": "Get All Users",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{baseUrl}}/users", "host": ["{{baseUrl}}"], "path": ["users"] }
+          }
+        },
+        {
+          "name": "Get User Profile",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{baseUrl}}/users/profile", "host": ["{{baseUrl}}"], "path": ["users", "profile"] }
+          }
+        },
+        {
+          "name": "Update User Status",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": { "mode": "raw", "raw": "{\n  \"status\": \"ACTIVE\"\n}" },
+            "url": { "raw": "{{baseUrl}}/users/2/status", "host": ["{{baseUrl}}"], "path": ["users", "2", "status"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "3. Membership Management",
+      "item": [
+        {
+          "name": "Get Active Membership Plans (Public)",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/memberships/plans", "host": ["{{baseUrl}}"], "path": ["memberships", "plans"] }
+          }
+        },
+        {
+          "name": "Get Membership Dashboard Stats",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{baseUrl}}/memberships/dashboard", "host": ["{{baseUrl}}"], "path": ["memberships", "dashboard"] }
+          }
+        },
+        {
+          "name": "Subscribe to Membership Plan",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"planId\": 1,\n  \"paymentMethod\": \"UPI\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/memberships/register", "host": ["{{baseUrl}}"], "path": ["memberships", "register"] }
+          }
+        },
+        {
+          "name": "Renew Membership",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"paymentMethod\": \"CREDIT_CARD\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/memberships/1/renew", "host": ["{{baseUrl}}"], "path": ["memberships", "1", "renew"] }
+          }
+        },
+        {
+          "name": "Get QR Membership Card",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{baseUrl}}/memberships/1/card", "host": ["{{baseUrl}}"], "path": ["memberships", "1", "card"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "4. Staff Management",
+      "item": [
+        {
+          "name": "Get Staff Dashboard Stats",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{baseUrl}}/staff/dashboard", "host": ["{{baseUrl}}"], "path": ["staff", "dashboard"] }
+          }
+        },
+        {
+          "name": "Search Employees",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{baseUrl}}/staff", "host": ["{{baseUrl}}"], "path": ["staff"] }
+          }
+        },
+        {
+          "name": "Mark Daily Attendance",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"employeeId\": 1,\n  \"attendanceDate\": \"2026-11-21\",\n  \"status\": \"PRESENT\",\n  \"checkInTime\": \"09:00:00\",\n  \"checkOutTime\": \"18:00:00\",\n  \"remarks\": \"On duty coaching\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/staff/attendance", "host": ["{{baseUrl}}"], "path": ["staff", "attendance"] }
+          }
+        },
+        {
+          "name": "Apply for Leave",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"leaveType\": \"CASUAL\",\n  \"startDate\": \"2026-11-25\",\n  \"endDate\": \"2026-11-26\",\n  \"reason\": \"Family function attendance\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/staff/leaves/apply", "host": ["{{baseUrl}}"], "path": ["staff", "leaves", "apply"] }
+          }
+        },
+        {
+          "name": "Review Leave (Approve/Reject)",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"APPROVED\",\n  \"adminRemarks\": \"Approved by Head Administrator\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/staff/leaves/1/review", "host": ["{{baseUrl}}"], "path": ["staff", "leaves", "1", "review"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "5. Team Integration Endpoints",
+      "item": [
+        {
+          "name": "Swathi: Verify Member for Court Booking",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/integration/members/verify/CS-MEM-2026-00101", "host": ["{{baseUrl}}"], "path": ["integration", "members", "verify", "CS-MEM-2026-00101"] }
+          }
+        },
+        {
+          "name": "Balaji: Check Member Discount Eligibility",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/integration/members/discount-eligibility/1", "host": ["{{baseUrl}}"], "path": ["integration", "members", "discount-eligibility", "1"] }
+          }
+        },
+        {
+          "name": "Anish: Central Finance & KPI Summary Feed",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/integration/analytics/club-summary", "host": ["{{baseUrl}}"], "path": ["integration", "analytics", "club-summary"] }
+          }
+        }
+      ]
+    }
+  ]
+}
