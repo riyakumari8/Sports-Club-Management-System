@@ -1,0 +1,12 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "java",
+      "name": "Spring Boot - ClubSphere Backend",
+      "request": "launch",
+      "mainClass": "com.clubsphere.ClubSphereApplication",
+      "projectName": "clubsphere-backend"
+    }
+  ]
+}
