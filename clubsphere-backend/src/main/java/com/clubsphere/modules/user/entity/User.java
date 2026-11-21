@@ -46,6 +46,23 @@ public class User extends BaseEntity {
     @Builder.Default
     private String status = "ACTIVE"; // ACTIVE, INACTIVE, SUSPENDED
 
+    @Column(name = "student_id", length = 30)
+    private String studentId;
+
+    @Column(name = "is_email_verified")
+    @Builder.Default
+    private Boolean isEmailVerified = true;
+
+    @Column(name = "trial_status", length = 30)
+    @Builder.Default
+    private String trialStatus = "NOT_STARTED"; // NOT_STARTED, ACTIVE, EXPIRED
+
+    @Column(name = "trial_start_date")
+    private LocalDate trialStartDate;
+
+    @Column(name = "trial_end_date")
+    private LocalDate trialEndDate;
+
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "user_roles",

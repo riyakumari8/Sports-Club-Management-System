@@ -36,6 +36,7 @@ public class MembershipService {
     private final MembershipPlanRepository planRepository;
     private final MembershipTransactionRepository transactionRepository;
     private final UserRepository userRepository;
+    private final com.clubsphere.service.NotificationService notificationService;
 
     @Transactional
     public MembershipResponseDto registerMembership(Long userId, MembershipRegistrationRequest req) {
@@ -49,6 +50,13 @@ public class MembershipService {
             member = memberRepository.findByUserId(userId)
                     .orElseThrow(() -> new ResourceNotFoundException("Member profile not found for user: " + userId));
         }
+
+        // Enforce ONE active membership policy (Section 11)
+        membershipRepository.findFirstByMemberAndStatusOrderByEndDateDesc(member, "ACTIVE").ifPresent(active -> {
+            throw new BadRequestException("Member already has an active membership (" + 
+                    active.getMembershipNumber() + " - " + active.getPlan().getName() + 
+                    "). ClubSphere policy strictly permits only ONE active membership per member. Please renew or upgrade your existing plan.");
+        });
 
         MembershipPlan plan = planRepository.findById(req.getPlanId())
                 .orElseThrow(() -> new ResourceNotFoundException("Plan not found: " + req.getPlanId()));
@@ -102,6 +110,16 @@ public class MembershipService {
                 .build();
         transactionRepository.save(transaction);
 
+        // Notify member
+        if (member.getUser() != null) {
+            notificationService.createNotification(
+                    member.getUser().getId(),
+                    "Membership Activated: " + plan.getName(),
+                    "Welcome! Your " + plan.getName() + " is active until " + endDate + ". Digital QR pass generated.",
+                    "MEMBERSHIP"
+            );
+        }
+
         return mapToResponseDto(membership);
     }
 
@@ -145,7 +163,81 @@ public class MembershipService {
                 .build();
         transactionRepository.save(transaction);
 
+        // Notify member
+        if (membership.getMember().getUser() != null) {
+            notificationService.createNotification(
+                    membership.getMember().getUser().getId(),
+                    "Membership Renewed: " + plan.getName(),
+                    "Your renewal payment was successful. Valid through " + newEndDate + ".",
+                    "MEMBERSHIP"
+            );
+        }
+
         return mapToResponseDto(membership);
+    }
+
+    @Transactional
+    public MembershipResponseDto upgradeMembership(Long currentMembershipId, UpgradeRequest req) {
+        Membership currentMembership = membershipRepository.findById(currentMembershipId)
+                .orElseThrow(() -> new ResourceNotFoundException("Current membership not found: " + currentMembershipId));
+
+        MembershipPlan newPlan = planRepository.findById(req.getNewPlanId())
+                .orElseThrow(() -> new ResourceNotFoundException("New plan not found: " + req.getNewPlanId()));
+
+        if (!Boolean.TRUE.equals(newPlan.getIsActive())) {
+            throw new BadRequestException("Selected upgrade plan is currently inactive");
+        }
+
+        Member member = currentMembership.getMember();
+
+        // Mark existing membership as SUPERSEDED to preserve historical records
+        currentMembership.setStatus("SUPERSEDED");
+        membershipRepository.save(currentMembership);
+
+        // Create new upgraded membership
+        LocalDate startDate = LocalDate.now();
+        LocalDate endDate = startDate.plusDays(newPlan.getDurationDays());
+        String membershipNumber = String.format("CS-MEM-%d-%05d", LocalDate.now().getYear(), System.currentTimeMillis() % 100000);
+        String qrCodeToken = UUID.randomUUID().toString();
+
+        Membership newMembership = Membership.builder()
+                .member(member)
+                .plan(newPlan)
+                .membershipNumber(membershipNumber)
+                .startDate(startDate)
+                .endDate(endDate)
+                .status("ACTIVE")
+                .qrCodeToken(qrCodeToken)
+                .autoRenew(false)
+                .build();
+
+        newMembership = membershipRepository.save(newMembership);
+
+        // Record upgrade transaction
+        String txRef = "TXN-UPG-" + System.currentTimeMillis();
+        MembershipTransaction transaction = MembershipTransaction.builder()
+                .membership(newMembership)
+                .member(member)
+                .transactionType("UPGRADE")
+                .amount(newPlan.getPrice())
+                .paymentMethod(req.getPaymentMethod().toUpperCase())
+                .paymentStatus("PAID")
+                .transactionReference(txRef)
+                .paidAt(LocalDateTime.now())
+                .build();
+        transactionRepository.save(transaction);
+
+        // Notify member
+        if (member.getUser() != null) {
+            notificationService.createNotification(
+                    member.getUser().getId(),
+                    "Membership Upgraded to " + newPlan.getName() + "!",
+                    "Congratulations! Your tier has been upgraded to " + newPlan.getName() + " with expanded club benefits.",
+                    "MEMBERSHIP"
+            );
+        }
+
+        return mapToResponseDto(newMembership);
     }
 
     @Transactional(readOnly = true)

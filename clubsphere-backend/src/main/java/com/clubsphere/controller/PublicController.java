@@ -30,7 +30,7 @@ public class PublicController {
         return ResponseEntity.ok(courtService.getAllActiveCourts());
     }
 
-    @GetMapping("/membership-plans")
+    @GetMapping({"/membership-plans", "/plans"})
     public ResponseEntity<List<Map<String, Object>>> getMembershipPlans() {
         return ResponseEntity.ok(membershipClientService.getPublicMembershipPlans());
     }

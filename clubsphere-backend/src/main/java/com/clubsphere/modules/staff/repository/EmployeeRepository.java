@@ -21,11 +21,11 @@ public interface EmployeeRepository extends JpaRepository<Employee, Long> {
     long countByDepartmentId(Integer departmentId);
 
     @Query("SELECT e FROM Employee e WHERE " +
-           "(:query IS NULL OR LOWER(e.user.fullName) LIKE LOWER(CONCAT('%', :query, '%')) OR " +
-           "LOWER(e.employeeCode) LIKE LOWER(CONCAT('%', :query, '%')) OR " +
-           "LOWER(e.designation) LIKE LOWER(CONCAT('%', :query, '%'))) AND " +
+           "(CAST(:query AS String) IS NULL OR LOWER(e.user.fullName) LIKE LOWER(CONCAT('%', CAST(:query AS String), '%')) OR " +
+           "LOWER(e.employeeCode) LIKE LOWER(CONCAT('%', CAST(:query AS String), '%')) OR " +
+           "LOWER(e.designation) LIKE LOWER(CONCAT('%', CAST(:query AS String), '%'))) AND " +
            "(:departmentId IS NULL OR e.department.id = :departmentId) AND " +
-           "(:status IS NULL OR e.employmentStatus = :status)")
+           "(CAST(:status AS String) IS NULL OR e.employmentStatus = CAST(:status AS String))")
     List<Employee> searchEmployees(
             @Param("query") String query,
             @Param("departmentId") Integer departmentId,

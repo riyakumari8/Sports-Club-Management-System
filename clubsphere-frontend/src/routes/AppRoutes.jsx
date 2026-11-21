@@ -3,12 +3,21 @@ import { Routes, Route, Navigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { Loader } from '../components/common/Loader';
 
-// Public Introduction Page
+// Public Pages
 import { IntroductionPage } from '../pages/public/IntroductionPage';
+import { AboutPage } from '../pages/public/AboutPage';
+import { SportsPage } from '../pages/public/SportsPage';
+import { CourtsPublicPage } from '../pages/public/CourtsPublicPage';
+import { MembershipsPublicPage } from '../pages/public/MembershipsPublicPage';
+import { PromotionsPage } from '../pages/public/PromotionsPage';
+import { ShopsPage } from '../pages/public/ShopsPage';
+import { ContactPage } from '../pages/public/ContactPage';
 
-// Auth Pages
+// Auth Pages & Dedicated Portals
 import { LoginPage } from '../pages/auth/LoginPage';
 import { RegisterPage } from '../pages/auth/RegisterPage';
+import { AdminLoginPage } from '../pages/auth/AdminLoginPage';
+import { StaffLoginPage } from '../pages/auth/StaffLoginPage';
 import { ForgotPasswordPage } from '../pages/auth/ForgotPasswordPage';
 
 // Admin Pages
@@ -38,7 +47,7 @@ import { DailyAttendancePage } from '../pages/staff/DailyAttendancePage';
 import { ApplyLeavePage } from '../pages/staff/ApplyLeavePage';
 import { ShiftSchedulePage } from '../pages/staff/ShiftSchedulePage';
 
-// Court & Operations Pages (Converted to Emerald Green UI)
+// Court & Operations Pages
 import { BookCourtPage } from '../pages/member/BookCourtPage';
 import { CourtAvailabilityPage } from '../pages/member/CourtAvailabilityPage';
 import { MyCourtBookingsPage } from '../pages/member/MyCourtBookingsPage';
@@ -68,7 +77,7 @@ const ProtectedRoute = ({ children, allowedRoles }) => {
     // Redirect to proper role portal
     if (roles.includes('ROLE_ADMIN')) return <Navigate to="/admin/dashboard" replace />;
     if (roles.includes('ROLE_STAFF')) return <Navigate to="/staff/dashboard" replace />;
-    return <Navigate to="/member/dashboard" replace />;
+    return <Navigate to="/student/dashboard" replace />;
   }
 
   return children;
@@ -81,18 +90,30 @@ export const AppRoutes = () => {
     if (!isAuthenticated) return '/login';
     if (roles.includes('ROLE_ADMIN')) return '/admin/dashboard';
     if (roles.includes('ROLE_STAFF')) return '/staff/dashboard';
-    return '/member/dashboard';
+    return '/student/dashboard';
   };
 
   return (
     <Routes>
-      {/* Public Introduction & Landing Page */}
+      {/* Public Pages */}
       <Route path="/" element={<IntroductionPage />} />
+      <Route path="/about" element={<AboutPage />} />
+      <Route path="/sports" element={<SportsPage />} />
+      <Route path="/courts" element={<CourtsPublicPage />} />
+      <Route path="/memberships" element={<MembershipsPublicPage />} />
+      <Route path="/promotions" element={<PromotionsPage />} />
+      <Route path="/shops" element={<ShopsPage />} />
+      <Route path="/contact" element={<ContactPage />} />
 
       {/* Auth Routes */}
       <Route path="/login" element={!isAuthenticated ? <LoginPage /> : <Navigate to={getDefaultRedirect()} replace />} />
+      <Route path="/signup" element={!isAuthenticated ? <RegisterPage /> : <Navigate to={getDefaultRedirect()} replace />} />
       <Route path="/register" element={!isAuthenticated ? <RegisterPage /> : <Navigate to={getDefaultRedirect()} replace />} />
       <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+
+      {/* Dedicated Evaluator / Role Portals */}
+      <Route path="/admin/login" element={!isAuthenticated ? <AdminLoginPage /> : <Navigate to="/admin/dashboard" replace />} />
+      <Route path="/staff/login" element={!isAuthenticated ? <StaffLoginPage /> : <Navigate to="/staff/dashboard" replace />} />
 
       {/* Admin Routes */}
       <Route
@@ -184,7 +205,15 @@ export const AppRoutes = () => {
         }
       />
 
-      {/* Member Routes */}
+      {/* Student / Member Routes */}
+      <Route
+        path="/student/dashboard"
+        element={
+          <ProtectedRoute allowedRoles={['ROLE_MEMBER', 'ROLE_ADMIN']}>
+            <MemberDashboard />
+          </ProtectedRoute>
+        }
+      />
       <Route
         path="/member/dashboard"
         element={

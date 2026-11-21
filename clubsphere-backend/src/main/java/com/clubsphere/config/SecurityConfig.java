@@ -101,6 +101,14 @@ public class SecurityConfig {
                 .requestMatchers("/api/memberships/plans/**").permitAll()
                 .requestMatchers("/api/integration/**").permitAll() // Integrations for Swathi, Balaji & Anish
                 .requestMatchers("/v3/api-docs/**", "/api-docs/**", "/swagger-ui/**", "/swagger-ui.html", "/error").permitAll()
+                // Public Website & Discovery Endpoints
+                .requestMatchers("/api/public/**").permitAll()
+                .requestMatchers("/api/promotions/**").permitAll()
+                .requestMatchers("/api/shops/**").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/courts/**").permitAll()
+                .requestMatchers("/api/enquiries/**", "/api/trial-bookings/**").permitAll()
+                .requestMatchers("/api/social-play/**").permitAll()
+                .requestMatchers("/api/notifications/**").authenticated()
                 // Users
                 .requestMatchers("/api/users/profile", "/api/users/change-password").authenticated()
                 .requestMatchers("/api/users/**").hasRole("ADMIN")
@@ -118,14 +126,10 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.GET, "/api/staff/*").hasAnyRole("ADMIN", "STAFF")
                 .requestMatchers("/api/staff/**").hasRole("ADMIN")
                 // Memberships
-                .requestMatchers("/api/memberships/my", "/api/memberships/register", "/api/memberships/*/renew", "/api/memberships/*/card").authenticated()
+                .requestMatchers("/api/memberships/my", "/api/memberships/register", "/api/memberships/*/renew", "/api/memberships/*/upgrade", "/api/memberships/*/card").authenticated()
                 .requestMatchers("/api/memberships/dashboard", "/api/memberships/all", "/api/memberships/verify/**").hasAnyRole("ADMIN", "STAFF")
                 .requestMatchers("/api/memberships/**").hasRole("ADMIN")
-                // Court & Booking Management (Swathi's Module)
-                .requestMatchers("/api/public/**").permitAll()
-                .requestMatchers(HttpMethod.GET, "/api/courts/**").permitAll()
-                .requestMatchers("/api/enquiries/**", "/api/trial-bookings/**").permitAll()
-                .requestMatchers("/api/social-play/**").permitAll()
+                // Court & Booking Management
                 .requestMatchers("/api/bookings/check-in", "/api/bookings/*/check-in").hasAnyRole("ADMIN", "STAFF")
                 .requestMatchers(HttpMethod.POST, "/api/bookings").permitAll()
                 .requestMatchers("/api/bookings/**").authenticated()

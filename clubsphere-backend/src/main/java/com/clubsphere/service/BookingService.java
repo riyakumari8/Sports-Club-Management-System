@@ -39,17 +39,23 @@ public class BookingService {
     private final CourtMaintenanceRepository maintenanceRepository;
     private final BookingWaitlistRepository waitlistRepository;
     private final MembershipClientService membershipClientService;
+    private final NotificationService notificationService;
+    private final com.clubsphere.modules.membership.repository.MemberRepository memberRepository;
 
     public BookingService(CourtBookingRepository bookingRepository,
                           CourtRepository courtRepository,
                           CourtMaintenanceRepository maintenanceRepository,
                           BookingWaitlistRepository waitlistRepository,
-                          MembershipClientService membershipClientService) {
+                          MembershipClientService membershipClientService,
+                          NotificationService notificationService,
+                          com.clubsphere.modules.membership.repository.MemberRepository memberRepository) {
         this.bookingRepository = bookingRepository;
         this.courtRepository = courtRepository;
         this.maintenanceRepository = maintenanceRepository;
         this.waitlistRepository = waitlistRepository;
         this.membershipClientService = membershipClientService;
+        this.notificationService = notificationService;
+        this.memberRepository = memberRepository;
     }
 
     /**
@@ -77,6 +83,7 @@ public class BookingService {
             closing = LocalTime.of(22, 0);
         }
 
+        List<SlotAvailabilityDTO> slots = new ArrayList<>();
         LocalTime currentSlotStart = opening;
         LocalDate today = LocalDate.now();
         LocalTime now = LocalTime.now();
@@ -238,7 +245,22 @@ public class BookingService {
         booking.setQrCodeHash(qrHash);
 
         // Step 10: Persist (PostgreSQL GiST exclusion constraint guarantees atomicity)
-        return bookingRepository.save(booking);
+        CourtBooking saved = bookingRepository.save(booking);
+
+        if (saved.getMemberId() != null) {
+            memberRepository.findById(saved.getMemberId()).ifPresent(mem -> {
+                if (mem.getUser() != null) {
+                    notificationService.createNotification(
+                            mem.getUser().getId(),
+                            "Court Booking Confirmed: " + reference,
+                            "Your reservation for " + court.getCourtName() + " on " + bookingDate + " from " + startTime + " to " + endTime + " is confirmed.",
+                            "BOOKING"
+                    );
+                }
+            });
+        }
+
+        return saved;
     }
 
     /**

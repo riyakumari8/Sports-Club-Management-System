@@ -43,6 +43,16 @@ public class MembershipController {
         return ResponseEntity.ok(ApiResponse.success("Membership renewed successfully", renewed));
     }
 
+    @PostMapping("/{id}/upgrade")
+    @Operation(summary = "Upgrade membership to a higher tier plan")
+    public ResponseEntity<ApiResponse<MembershipResponseDto>> upgradeMembership(
+            @PathVariable Long id,
+            @Valid @RequestBody UpgradeRequest req
+    ) {
+        MembershipResponseDto upgraded = membershipService.upgradeMembership(id, req);
+        return ResponseEntity.ok(ApiResponse.success("Membership upgraded successfully", upgraded));
+    }
+
     @GetMapping("/my")
     @Operation(summary = "Get current logged-in member's membership history")
     public ResponseEntity<ApiResponse<List<MembershipResponseDto>>> getMyMemberships(

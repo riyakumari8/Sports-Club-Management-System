@@ -54,6 +54,26 @@ export const AuthProvider = ({ children }) => {
   const isMember = roles.includes('ROLE_MEMBER');
   const isAuthenticated = !!token && !!user;
 
+  const setAuthUser = (authData) => {
+    if (authData) {
+      setUser(authData);
+      setToken(authData.token || authService.getToken());
+    } else {
+      setUser(null);
+      setToken(null);
+    }
+  };
+
+  const refreshUser = async () => {
+    try {
+      const freshUser = await authService.getCurrentUser();
+      setUser((prev) => ({ ...prev, ...freshUser }));
+      return freshUser;
+    } catch {
+      return null;
+    }
+  };
+
   const value = {
     user,
     token,
@@ -64,6 +84,8 @@ export const AuthProvider = ({ children }) => {
     isMember,
     login,
     register,
+    setAuthUser,
+    refreshUser,
     logout,
     loading,
   };
