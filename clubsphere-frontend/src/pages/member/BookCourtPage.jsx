@@ -31,7 +31,7 @@ export const BookCourtPage = () => {
   const [selectedCourtId, setSelectedCourtId] = useState(searchParams.get('courtId') || '');
   const [selectedDate, setSelectedDate] = useState(searchParams.get('date') || new Date().toISOString().split('T')[0]);
   const [slots, setSlots] = useState([]);
-  const [selectedSlot, setSelectedSlot] = useState('');
+  const [selectedSlot, setSelectedSlot] = useState(searchParams.get('time') || searchParams.get('slot') || '');
 
   // Member tier details
   const [myPlanTier, setMyPlanTier] = useState('GOLD');
@@ -389,28 +389,35 @@ export const BookCourtPage = () => {
             ) : (
               <div style={{
                 display: 'grid',
-                gridTemplateColumns: 'repeat(auto-fill, minmax(100px, 1fr))',
-                gap: '8px',
-                maxHeight: '280px',
+                gridTemplateColumns: 'repeat(auto-fill, minmax(115px, 1fr))',
+                gap: '10px',
+                maxHeight: '300px',
                 overflowY: 'auto',
                 paddingRight: '4px',
               }}>
                 {slots.map((s, idx) => {
-                  const isAvailable = s.isAvailable !== false;
-                  const isChosen = selectedSlot === s.slotTime;
+                  const isAvailable = (s.available !== undefined ? s.available : s.isAvailable) !== false;
+                  const rawStart = s.startTime
+                    ? (typeof s.startTime === 'string' && s.startTime.length >= 5 ? s.startTime.substring(0, 5) : String(s.startTime))
+                    : (s.slotTime || '');
+                  const rawEnd = s.endTime
+                    ? (typeof s.endTime === 'string' && s.endTime.length >= 5 ? s.endTime.substring(0, 5) : String(s.endTime))
+                    : '';
+                  const isChosen = selectedSlot === rawStart;
 
                   return (
                     <button
                       key={idx}
+                      type="button"
                       disabled={!isAvailable}
-                      onClick={() => setSelectedSlot(s.slotTime)}
+                      onClick={() => setSelectedSlot(rawStart)}
                       style={{
-                        padding: '0.65rem 0.5rem',
-                        borderRadius: '8px',
-                        border: '1px solid',
-                        borderColor: isChosen ? '#0F5132' : isAvailable ? '#d1d5db' : '#f3f4f6',
-                        backgroundColor: isChosen ? '#0F5132' : isAvailable ? '#ffffff' : '#f9fafb',
-                        color: isChosen ? '#ffffff' : isAvailable ? '#111827' : '#9ca3af',
+                        padding: '0.75rem 0.5rem',
+                        borderRadius: '10px',
+                        border: '2px solid',
+                        borderColor: isChosen ? '#0F5132' : isAvailable ? '#cbd5e1' : '#f1f5f9',
+                        backgroundColor: isChosen ? '#0F5132' : isAvailable ? '#ffffff' : '#f8fafc',
+                        color: isChosen ? '#ffffff' : isAvailable ? '#0f172a' : '#94a3b8',
                         fontSize: '0.85rem',
                         fontWeight: isChosen ? 700 : 500,
                         cursor: isAvailable ? 'pointer' : 'not-allowed',
@@ -419,11 +426,25 @@ export const BookCourtPage = () => {
                         alignItems: 'center',
                         gap: '2px',
                         transition: 'all 0.15s ease',
+                        boxShadow: isChosen ? '0 4px 12px rgba(15, 81, 50, 0.25)' : 'none',
                       }}
                     >
-                      <Clock size={14} />
-                      <span>{s.slotTime}</span>
-                      <span style={{ fontSize: '0.65rem', opacity: 0.8 }}>
+                      <Clock size={16} color={isChosen ? '#fef08a' : isAvailable ? '#0F5132' : '#94a3b8'} />
+                      <span style={{ fontWeight: 800, fontSize: '0.95rem', color: isChosen ? '#ffffff' : '#0f172a' }}>
+                        {rawStart}
+                      </span>
+                      {rawEnd && (
+                        <span style={{ fontSize: '0.7rem', color: isChosen ? '#86efac' : '#64748b' }}>
+                          to {rawEnd}
+                        </span>
+                      )}
+                      <span style={{
+                        fontSize: '0.65rem',
+                        fontWeight: 700,
+                        textTransform: 'uppercase',
+                        color: isChosen ? '#fef08a' : isAvailable ? '#059669' : '#dc2626',
+                        marginTop: '2px',
+                      }}>
                         {isAvailable ? 'Available' : 'Booked'}
                       </span>
                     </button>

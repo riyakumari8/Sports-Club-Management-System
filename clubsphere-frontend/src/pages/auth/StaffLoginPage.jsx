@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
-import { Briefcase, Lock, User, ArrowRight, AlertCircle, Eye, EyeOff, CheckCircle2, Shield, ShoppingBag, Coffee } from 'lucide-react';
+import { Briefcase, Lock, User, ArrowRight, AlertCircle, Eye, EyeOff } from 'lucide-react';
 
 export const StaffLoginPage = () => {
   const { login } = useAuth();
   const navigate = useNavigate();
 
-  const [formData, setFormData] = useState({ email: 'SP001', password: 'Staff@123' });
+  const [formData, setFormData] = useState({ email: '', password: '' });
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
@@ -29,11 +29,6 @@ export const StaffLoginPage = () => {
     } finally {
       setLoading(false);
     }
-  };
-
-  const handleQuickFill = (code) => {
-    setFormData({ email: code, password: 'Staff@123' });
-    setError('');
   };
 
   return (
@@ -80,70 +75,6 @@ export const StaffLoginPage = () => {
           <p style={{ color: '#6b7280', fontSize: '0.85rem', marginTop: '4px' }}>
             Sign in with your Staff ID (e.g. SP001, FD001) or registered email
           </p>
-        </div>
-
-        {/* Evaluator Quick Department Selection */}
-        <div style={{
-          backgroundColor: '#f8fafc',
-          border: '1px solid #e2e8f0',
-          borderRadius: '14px',
-          padding: '0.85rem',
-          marginBottom: '1.25rem'
-        }}>
-          <div style={{ fontSize: '0.75rem', fontWeight: 700, color: '#475569', marginBottom: '6px', display: 'flex', alignItems: 'center', gap: '6px' }}>
-            <Shield size={14} color="#0F5132" /> Evaluation Department Quick-Fill:
-          </div>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
-            <button
-              type="button"
-              onClick={() => handleQuickFill('SP001')}
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '6px',
-                padding: '6px 10px',
-                borderRadius: '8px',
-                border: formData.email === 'SP001' ? '2px solid #0F5132' : '1px solid #cbd5e1',
-                backgroundColor: formData.email === 'SP001' ? '#ecfdf5' : '#ffffff',
-                fontSize: '0.78rem',
-                fontWeight: 700,
-                color: '#0F5132',
-                cursor: 'pointer',
-                textAlign: 'left'
-              }}
-            >
-              <ShoppingBag size={14} />
-              <div>
-                <div>SP001 (Sports)</div>
-                <div style={{ fontSize: '0.68rem', color: '#64748b', fontWeight: 500 }}>Rajesh Kumar</div>
-              </div>
-            </button>
-
-            <button
-              type="button"
-              onClick={() => handleQuickFill('FD001')}
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '6px',
-                padding: '6px 10px',
-                borderRadius: '8px',
-                border: formData.email === 'FD001' ? '2px solid #0F5132' : '1px solid #cbd5e1',
-                backgroundColor: formData.email === 'FD001' ? '#ecfdf5' : '#ffffff',
-                fontSize: '0.78rem',
-                fontWeight: 700,
-                color: '#0F5132',
-                cursor: 'pointer',
-                textAlign: 'left'
-              }}
-            >
-              <Coffee size={14} />
-              <div>
-                <div>FD001 (Cafe)</div>
-                <div style={{ fontSize: '0.68rem', color: '#64748b', fontWeight: 500 }}>Meera Joshi</div>
-              </div>
-            </button>
-          </div>
         </div>
 
         {error && (
