@@ -166,9 +166,15 @@ public class BookingService {
         }
 
         // Step 3: Validate Operating Hours
-        if (startTime.isBefore(court.getOpeningTime()) || endTime.isAfter(court.getClosingTime())) {
+        LocalTime opening = court.getOpeningTime() != null ? court.getOpeningTime() : LocalTime.of(6, 0);
+        LocalTime closing = court.getClosingTime() != null ? court.getClosingTime() : LocalTime.of(22, 0);
+        if (closing.isBefore(opening)) {
+            opening = LocalTime.of(6, 0);
+            closing = LocalTime.of(22, 0);
+        }
+        if (startTime.isBefore(opening) || endTime.isAfter(closing)) {
             throw new BadRequestException(String.format("Booking must be within operating hours (%s - %s)",
-                    court.getOpeningTime(), court.getClosingTime()));
+                    opening, closing));
         }
 
         // Step 4: Maintenance check
@@ -269,8 +275,15 @@ public class BookingService {
         }
 
         // Validate operating hours
-        if (newStartTime.isBefore(court.getOpeningTime()) || newEndTime.isAfter(court.getClosingTime())) {
-            throw new BadRequestException("New slot is outside court operating hours.");
+        LocalTime opening = court.getOpeningTime() != null ? court.getOpeningTime() : LocalTime.of(6, 0);
+        LocalTime closing = court.getClosingTime() != null ? court.getClosingTime() : LocalTime.of(22, 0);
+        if (closing.isBefore(opening)) {
+            opening = LocalTime.of(6, 0);
+            closing = LocalTime.of(22, 0);
+        }
+        if (newStartTime.isBefore(opening) || newEndTime.isAfter(closing)) {
+            throw new BadRequestException(String.format("New slot is outside court operating hours (%s - %s)",
+                    opening, closing));
         }
 
         // Check maintenance

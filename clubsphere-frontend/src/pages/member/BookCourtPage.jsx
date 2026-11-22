@@ -34,7 +34,7 @@ export const BookCourtPage = () => {
   const [selectedSlot, setSelectedSlot] = useState(searchParams.get('time') || searchParams.get('slot') || '');
 
   // Member tier details
-  const [myPlanTier, setMyPlanTier] = useState('GOLD');
+  const [myPlanTier, setMyPlanTier] = useState('STANDARD');
   const [loading, setLoading] = useState(true);
   const [loadingSlots, setLoadingSlots] = useState(false);
   const [submitting, setSubmitting] = useState(false);
@@ -57,9 +57,17 @@ export const BookCourtPage = () => {
           }
         }
 
-        if (memberships.status === 'fulfilled' && memberships.value?.length > 0) {
-          const activeMem = memberships.value.find(m => m.status === 'ACTIVE') || memberships.value[0];
-          setMyPlanTier(activeMem.planCategory || 'GOLD');
+        if (memberships.status === 'fulfilled' && memberships.value) {
+          const raw = memberships.value;
+          const list = Array.isArray(raw) ? raw : (raw?.data || []);
+          const activeMem = list.find(m => m.status === 'ACTIVE');
+          if (activeMem) {
+            setMyPlanTier(activeMem.planCategory || activeMem.category || 'GOLD');
+          } else {
+            setMyPlanTier('STANDARD');
+          }
+        } else {
+          setMyPlanTier('STANDARD');
         }
       } catch (err) {
         console.error(err);
@@ -116,6 +124,7 @@ export const BookCourtPage = () => {
       const payload = {
         courtId: Number(selectedCourtId),
         memberId: user?.id || 1,
+        memberTier: myPlanTier,
         guestName: user?.fullName || 'Club Member',
         guestEmail: user?.email || 'member@clubsphere.com',
         guestPhone: user?.phone || '+91 9800000000',
@@ -237,6 +246,7 @@ export const BookCourtPage = () => {
             {myPlanTier === 'GOLD' && '🌟 Gold Member: 100% Free Court Access Quota applies automatically.'}
             {myPlanTier === 'SILVER' && '🥈 Silver Member: 25% Discount applied on regular court rates.'}
             {myPlanTier === 'JUNIOR' && '🎾 Junior Member: 50% Youth Training Discount applies.'}
+            {myPlanTier !== 'GOLD' && myPlanTier !== 'SILVER' && myPlanTier !== 'JUNIOR' && '🏸 Standard Member: Standard court booking rates apply.'}
           </p>
         </div>
         <div style={{ textAlign: 'right' }}>

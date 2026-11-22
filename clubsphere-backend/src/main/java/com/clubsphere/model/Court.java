@@ -95,10 +95,20 @@ public class Court {
     public Integer getCapacity() { return capacity; }
     public void setCapacity(Integer capacity) { this.capacity = capacity; }
 
-    public LocalTime getOpeningTime() { return openingTime; }
+    public LocalTime getOpeningTime() {
+        if (openingTime != null && closingTime != null && closingTime.isBefore(openingTime)) {
+            return LocalTime.of(6, 0);
+        }
+        return openingTime != null ? openingTime : LocalTime.of(6, 0);
+    }
     public void setOpeningTime(LocalTime openingTime) { this.openingTime = openingTime; }
 
-    public LocalTime getClosingTime() { return closingTime; }
+    public LocalTime getClosingTime() {
+        if (openingTime != null && closingTime != null && closingTime.isBefore(openingTime)) {
+            return LocalTime.of(22, 0);
+        }
+        return closingTime != null ? closingTime : LocalTime.of(22, 0);
+    }
     public void setClosingTime(LocalTime closingTime) { this.closingTime = closingTime; }
 
     public BigDecimal getStandardHourlyRate() { return standardHourlyRate; }
