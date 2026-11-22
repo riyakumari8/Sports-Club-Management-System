@@ -19,11 +19,14 @@ export const StaffLoginPage = () => {
 
     try {
       const data = await login(formData);
-      if (!data.roles?.includes('ROLE_STAFF') && !data.roles?.includes('ROLE_ADMIN')) {
+      const userRoles = Array.isArray(data.roles) && data.roles.length > 0
+        ? data.roles
+        : (data.authorities?.map(a => typeof a === 'string' ? a : (a.authority || a.role || '')) || []);
+      if (!userRoles.includes('ROLE_STAFF') && !userRoles.includes('ROLE_ADMIN')) {
         setError('Access denied: You do not have staff operational privileges.');
         return;
       }
-      navigate('/staff/dashboard');
+      navigate('/staff/dashboard', { replace: true });
     } catch (err) {
       setError(err.response?.data?.message || err.message || 'Invalid Staff ID or password. Please verify credentials.');
     } finally {

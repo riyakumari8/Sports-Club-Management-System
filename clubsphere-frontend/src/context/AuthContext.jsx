@@ -3,6 +3,15 @@ import { authService } from '../services/authService';
 
 const AuthContext = createContext(null);
 
+const normalizeRoles = (u) => {
+  if (!u) return [];
+  if (Array.isArray(u.roles) && u.roles.length > 0) return u.roles;
+  if (Array.isArray(u.authorities) && u.authorities.length > 0) {
+    return u.authorities.map(a => typeof a === 'string' ? a : (a.authority || a.role || '')).filter(Boolean);
+  }
+  return [];
+};
+
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(authService.getStoredUser());
   const [token, setToken] = useState(authService.getToken());
@@ -14,7 +23,13 @@ export const AuthProvider = ({ children }) => {
       if (storedToken) {
         try {
           const freshUser = await authService.getCurrentUser();
-          setUser((prev) => ({ ...prev, ...freshUser }));
+          const stored = authService.getStoredUser() || {};
+          const roles = normalizeRoles(freshUser).length > 0
+            ? normalizeRoles(freshUser)
+            : normalizeRoles(stored);
+          const merged = { ...stored, ...freshUser, roles };
+          setUser(merged);
+          localStorage.setItem('user', JSON.stringify(merged));
         } catch {
           // Token expired or server restarted
           authService.logout();
@@ -30,16 +45,22 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (credentials) => {
     const data = await authService.login(credentials);
-    setUser(data);
+    const roles = normalizeRoles(data);
+    const fullUser = { ...data, roles };
+    setUser(fullUser);
     setToken(data.token);
-    return data;
+    localStorage.setItem('user', JSON.stringify(fullUser));
+    return fullUser;
   };
 
   const register = async (formData) => {
     const data = await authService.register(formData);
-    setUser(data);
+    const roles = normalizeRoles(data);
+    const fullUser = { ...data, roles };
+    setUser(fullUser);
     setToken(data.token);
-    return data;
+    localStorage.setItem('user', JSON.stringify(fullUser));
+    return fullUser;
   };
 
   const logout = () => {
@@ -48,7 +69,7 @@ export const AuthProvider = ({ children }) => {
     setToken(null);
   };
 
-  const roles = user?.roles || [];
+  const roles = normalizeRoles(user);
   const isAdmin = roles.includes('ROLE_ADMIN');
   const isStaff = roles.includes('ROLE_STAFF');
   const isMember = roles.includes('ROLE_MEMBER');

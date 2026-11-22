@@ -137,8 +137,14 @@ export const AppRoutes = () => {
       <Route path="/forgot-password" element={<ForgotPasswordPage />} />
 
       {/* Dedicated Evaluator / Role Portals */}
-      <Route path="/admin/login" element={!isAuthenticated ? <AdminLoginPage /> : <Navigate to="/admin/dashboard" replace />} />
-      <Route path="/staff/login" element={!isAuthenticated ? <StaffLoginPage /> : <Navigate to="/staff/dashboard" replace />} />
+      <Route
+        path="/admin/login"
+        element={!isAuthenticated || !roles.includes('ROLE_ADMIN') ? <AdminLoginPage /> : <Navigate to="/admin/dashboard" replace />}
+      />
+      <Route
+        path="/staff/login"
+        element={!isAuthenticated || !roles.includes('ROLE_STAFF') ? <StaffLoginPage /> : <Navigate to="/staff/dashboard" replace />}
+      />
 
       {/* Admin Routes */}
       <Route

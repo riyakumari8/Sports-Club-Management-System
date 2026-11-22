@@ -49,6 +49,12 @@ public class UserDetailsImpl implements UserDetails {
         return authorities;
     }
 
+    public List<String> getRoles() {
+        return authorities != null
+                ? authorities.stream().map(GrantedAuthority::getAuthority).collect(Collectors.toList())
+                : List.of();
+    }
+
     @Override
     public String getPassword() {
         return password;

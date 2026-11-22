@@ -77,11 +77,11 @@ export const IntroductionPage = () => {
     setSandboxLoading(true);
     setSandboxError('');
     try {
-      await login({ username, password });
+      await login({ email: username, username, password });
       setShowSandbox(false);
-      navigate(redirectPath);
+      navigate(redirectPath, { replace: true });
     } catch (err) {
-      setSandboxError(err.response?.data?.message || 'Login failed. Please check backend status.');
+      setSandboxError(err.response?.data?.message || err.message || 'Login failed. Please check backend status.');
     } finally {
       setSandboxLoading(false);
     }

@@ -18,11 +18,14 @@ export const AdminLoginPage = () => {
 
     try {
       const data = await login(formData);
-      if (!data.roles?.includes('ROLE_ADMIN')) {
+      const userRoles = Array.isArray(data.roles) && data.roles.length > 0
+        ? data.roles
+        : (data.authorities?.map(a => typeof a === 'string' ? a : (a.authority || a.role || '')) || []);
+      if (!userRoles.includes('ROLE_ADMIN')) {
         setError('Access denied: You do not have Administrator clearance.');
         return;
       }
-      navigate('/admin/dashboard');
+      navigate('/admin/dashboard', { replace: true });
     } catch (err) {
       setError(err.response?.data?.message || err.message || 'Administrator authentication failed.');
     } finally {

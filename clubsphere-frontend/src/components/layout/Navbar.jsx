@@ -14,7 +14,7 @@ import {
 } from 'lucide-react';
 
 export const Navbar = ({ title, subtitle }) => {
-  const { user } = useAuth();
+  const { user, roles, isAdmin, isStaff, isMember } = useAuth();
   const [unreadCount, setUnreadCount] = useState(0);
   const [notifications, setNotifications] = useState([]);
   const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -75,9 +75,9 @@ export const Navbar = ({ title, subtitle }) => {
   };
 
   const getPrimaryRole = () => {
-    if (user?.roles?.includes('ROLE_ADMIN')) return 'Admin';
-    if (user?.roles?.includes('ROLE_STAFF')) return 'Staff';
-    if (user?.roles?.includes('ROLE_MEMBER')) return 'Student Member';
+    if (isAdmin || roles?.includes('ROLE_ADMIN') || user?.roles?.includes('ROLE_ADMIN')) return 'Admin';
+    if (isStaff || roles?.includes('ROLE_STAFF') || user?.roles?.includes('ROLE_STAFF')) return 'Staff';
+    if (isMember || roles?.includes('ROLE_MEMBER') || user?.roles?.includes('ROLE_MEMBER')) return 'Student Member';
     return 'User';
   };
 

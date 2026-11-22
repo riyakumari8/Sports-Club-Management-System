@@ -30,12 +30,16 @@ export const LoginPage = () => {
       }
 
       // Role-based routing
-      if (data.roles?.includes('ROLE_ADMIN')) {
-        navigate('/admin/dashboard');
-      } else if (data.roles?.includes('ROLE_STAFF')) {
-        navigate('/staff/dashboard');
+      const userRoles = Array.isArray(data.roles) && data.roles.length > 0
+        ? data.roles
+        : (data.authorities?.map(a => typeof a === 'string' ? a : (a.authority || a.role || '')) || []);
+
+      if (userRoles.includes('ROLE_ADMIN')) {
+        navigate('/admin/dashboard', { replace: true });
+      } else if (userRoles.includes('ROLE_STAFF')) {
+        navigate('/staff/dashboard', { replace: true });
       } else {
-        navigate('/student/dashboard');
+        navigate('/student/dashboard', { replace: true });
       }
     } catch (err) {
       setError(err.response?.data?.message || err.message || 'Login failed. Please check your student credentials.');
