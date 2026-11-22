@@ -46,6 +46,22 @@ import { StaffProfilePage } from '../pages/staff/StaffProfilePage';
 import { DailyAttendancePage } from '../pages/staff/DailyAttendancePage';
 import { ApplyLeavePage } from '../pages/staff/ApplyLeavePage';
 import { ShiftSchedulePage } from '../pages/staff/ShiftSchedulePage';
+import { StaffSupportPage } from '../pages/staff/StaffSupportPage';
+
+// Sports Shop Staff Pages
+import { SportsShopOrdersPage } from '../pages/staff/SportsShopOrdersPage';
+import { SportsInventoryPage } from '../pages/staff/SportsInventoryPage';
+import { SportsCounterSalePage } from '../pages/staff/SportsCounterSalePage';
+import { SportsReturnsPage } from '../pages/staff/SportsReturnsPage';
+import { SportsReportsPage } from '../pages/staff/SportsReportsPage';
+
+// Food Shop Staff Pages
+import { FoodOrdersKitchenPage } from '../pages/staff/FoodOrdersKitchenPage';
+import { FoodMenuManagementPage } from '../pages/staff/FoodMenuManagementPage';
+import { FoodTableManagementPage } from '../pages/staff/FoodTableManagementPage';
+import { FoodBillingCounterPage } from '../pages/staff/FoodBillingCounterPage';
+import { FoodInventoryPage } from '../pages/staff/FoodInventoryPage';
+import { FoodReportsPage } from '../pages/staff/FoodReportsPage';
 
 // Court & Operations Pages
 import { BookCourtPage } from '../pages/member/BookCourtPage';
@@ -446,6 +462,106 @@ export const AppRoutes = () => {
         element={
           <ProtectedRoute allowedRoles={['ROLE_STAFF', 'ROLE_ADMIN']}>
             <AdminAllBookingsPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/staff/support"
+        element={
+          <ProtectedRoute allowedRoles={['ROLE_STAFF', 'ROLE_ADMIN']}>
+            <StaffSupportPage />
+          </ProtectedRoute>
+        }
+      />
+
+      {/* Sports Shop Department Routes */}
+      <Route
+        path="/staff/sports-orders"
+        element={
+          <ProtectedRoute allowedRoles={['ROLE_STAFF', 'ROLE_ADMIN']}>
+            <SportsShopOrdersPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/staff/sports-inventory"
+        element={
+          <ProtectedRoute allowedRoles={['ROLE_STAFF', 'ROLE_ADMIN']}>
+            <SportsInventoryPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/staff/sports-counter-sale"
+        element={
+          <ProtectedRoute allowedRoles={['ROLE_STAFF', 'ROLE_ADMIN']}>
+            <SportsCounterSalePage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/staff/sports-returns"
+        element={
+          <ProtectedRoute allowedRoles={['ROLE_STAFF', 'ROLE_ADMIN']}>
+            <SportsReturnsPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/staff/sports-reports"
+        element={
+          <ProtectedRoute allowedRoles={['ROLE_STAFF', 'ROLE_ADMIN']}>
+            <SportsReportsPage />
+          </ProtectedRoute>
+        }
+      />
+
+      {/* Food Shop & Cafe Department Routes */}
+      <Route
+        path="/staff/food-orders"
+        element={
+          <ProtectedRoute allowedRoles={['ROLE_STAFF', 'ROLE_ADMIN']}>
+            <FoodOrdersKitchenPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/staff/food-menu"
+        element={
+          <ProtectedRoute allowedRoles={['ROLE_STAFF', 'ROLE_ADMIN']}>
+            <FoodMenuManagementPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/staff/food-tables"
+        element={
+          <ProtectedRoute allowedRoles={['ROLE_STAFF', 'ROLE_ADMIN']}>
+            <FoodTableManagementPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/staff/food-billing"
+        element={
+          <ProtectedRoute allowedRoles={['ROLE_STAFF', 'ROLE_ADMIN']}>
+            <FoodBillingCounterPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/staff/food-inventory"
+        element={
+          <ProtectedRoute allowedRoles={['ROLE_STAFF', 'ROLE_ADMIN']}>
+            <FoodInventoryPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/staff/food-reports"
+        element={
+          <ProtectedRoute allowedRoles={['ROLE_STAFF', 'ROLE_ADMIN']}>
+            <FoodReportsPage />
           </ProtectedRoute>
         }
       />

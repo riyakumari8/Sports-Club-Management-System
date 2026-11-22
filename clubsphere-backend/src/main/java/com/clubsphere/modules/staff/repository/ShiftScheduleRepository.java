@@ -12,4 +12,6 @@ import java.util.List;
 public interface ShiftScheduleRepository extends JpaRepository<EmployeeShiftSchedule, Long> {
     List<EmployeeShiftSchedule> findByEmployeeAndScheduleDateBetween(Employee employee, LocalDate start, LocalDate end);
     List<EmployeeShiftSchedule> findByScheduleDate(LocalDate scheduleDate);
+    List<EmployeeShiftSchedule> findByEmployeeIdOrderByScheduleDateDesc(Long employeeId);
+    java.util.Optional<EmployeeShiftSchedule> findByEmployeeIdAndScheduleDate(Long employeeId, LocalDate scheduleDate);
 }

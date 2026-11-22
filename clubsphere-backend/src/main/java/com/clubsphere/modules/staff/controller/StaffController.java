@@ -14,6 +14,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/staff")
@@ -22,6 +23,7 @@ import java.util.List;
 public class StaffController {
 
     private final StaffService staffService;
+    private final com.clubsphere.modules.staff.service.StaffDepartmentService staffDepartmentService;
 
     @GetMapping
     @PreAuthorize("hasRole('ADMIN')")
@@ -77,15 +79,72 @@ public class StaffController {
     }
 
     @GetMapping("/dashboard")
-    @PreAuthorize("hasRole('ADMIN')")
-    @Operation(summary = "Staff dashboard metrics & department headcount (Admin only)")
-    public ResponseEntity<ApiResponse<StaffDashboardStats>> getDashboardStats() {
-        return ResponseEntity.ok(ApiResponse.success("Staff dashboard stats", staffService.getDashboardStats()));
+    @PreAuthorize("hasAnyRole('ADMIN', 'STAFF')")
+    @Operation(summary = "Staff dashboard metrics & department-isolated summary")
+    public ResponseEntity<ApiResponse<Object>> getDashboardStats(
+            @AuthenticationPrincipal UserDetailsImpl userDetails,
+            @RequestParam(required = false, defaultValue = "false") boolean adminOverview
+    ) {
+        boolean isAdmin = userDetails != null && userDetails.getAuthorities().stream()
+                .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
+        if (isAdmin && adminOverview) {
+            return ResponseEntity.ok(ApiResponse.success("Staff admin stats", staffService.getDashboardStats()));
+        }
+        return ResponseEntity.ok(ApiResponse.success("Staff department dashboard", staffDepartmentService.getStaffDashboard(userDetails.getId())));
+    }
+
+    @GetMapping("/permissions")
+    @PreAuthorize("hasAnyRole('ADMIN', 'STAFF')")
+    @Operation(summary = "Get permitted actions for logged-in staff member")
+    public ResponseEntity<ApiResponse<List<String>>> getMyPermissions(@AuthenticationPrincipal UserDetailsImpl userDetails) {
+        return ResponseEntity.ok(ApiResponse.success("Permissions retrieved", staffDepartmentService.getStaffPermissions(userDetails.getId())));
+    }
+
+    @PatchMapping("/profile")
+    @PreAuthorize("hasAnyRole('ADMIN', 'STAFF')")
+    @Operation(summary = "Update permitted personal profile fields (phone, address)")
+    public ResponseEntity<ApiResponse<Map<String, Object>>> updateProfile(
+            @AuthenticationPrincipal UserDetailsImpl userDetails,
+            @RequestBody Map<String, String> payload
+    ) {
+        return ResponseEntity.ok(ApiResponse.success("Profile updated", staffDepartmentService.updateStaffProfile(userDetails.getId(), payload)));
+    }
+
+    @PostMapping("/attendance/clock-in")
+    @PreAuthorize("hasAnyRole('ADMIN', 'STAFF')")
+    @Operation(summary = "Clock in for today")
+    public ResponseEntity<ApiResponse<Map<String, Object>>> clockIn(@AuthenticationPrincipal UserDetailsImpl userDetails) {
+        return ResponseEntity.ok(ApiResponse.success("Clock in successful", staffDepartmentService.clockIn(userDetails.getId())));
+    }
+
+    @PostMapping("/attendance/clock-out")
+    @PreAuthorize("hasAnyRole('ADMIN', 'STAFF')")
+    @Operation(summary = "Clock out for today")
+    public ResponseEntity<ApiResponse<Map<String, Object>>> clockOut(@AuthenticationPrincipal UserDetailsImpl userDetails) {
+        return ResponseEntity.ok(ApiResponse.success("Clock out successful", staffDepartmentService.clockOut(userDetails.getId())));
+    }
+
+    @GetMapping("/attendance/my-history")
+    @PreAuthorize("hasAnyRole('ADMIN', 'STAFF')")
+    @Operation(summary = "View personal attendance history")
+    public ResponseEntity<ApiResponse<Object>> getMyAttendanceHistory(@AuthenticationPrincipal UserDetailsImpl userDetails) {
+        return ResponseEntity.ok(ApiResponse.success("Attendance history retrieved", staffDepartmentService.getMyAttendance(userDetails.getId())));
+    }
+
+    @GetMapping("/shifts/my-shifts")
+    @PreAuthorize("hasAnyRole('ADMIN', 'STAFF')")
+    @Operation(summary = "View personal assigned shifts")
+    public ResponseEntity<ApiResponse<Object>> getMyShifts(@AuthenticationPrincipal UserDetailsImpl userDetails) {
+        return ResponseEntity.ok(ApiResponse.success("Assigned shifts retrieved", staffDepartmentService.getMyShifts(userDetails.getId())));
     }
 
     @GetMapping("/me")
     @Operation(summary = "Get logged-in staff profile")
     public ResponseEntity<ApiResponse<EmployeeDto>> getMyStaffProfile(@AuthenticationPrincipal UserDetailsImpl userDetails) {
-        return ResponseEntity.ok(ApiResponse.success("Staff profile retrieved", staffService.getEmployeeByUserId(userDetails.getId())));
+        EmployeeDto emp = staffService.getEmployeeByUserId(userDetails.getId());
+        if (emp != null) {
+            emp.setPermissions(staffDepartmentService.getStaffPermissions(userDetails.getId()));
+        }
+        return ResponseEntity.ok(ApiResponse.success("Staff profile retrieved", emp));
     }
 }

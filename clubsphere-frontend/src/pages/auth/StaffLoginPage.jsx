@@ -1,13 +1,14 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
-import { Briefcase, Lock, Mail, ArrowRight, AlertCircle, UserCheck } from 'lucide-react';
+import { Briefcase, Lock, User, ArrowRight, AlertCircle, Eye, EyeOff, CheckCircle2, Shield, ShoppingBag, Coffee } from 'lucide-react';
 
 export const StaffLoginPage = () => {
   const { login } = useAuth();
   const navigate = useNavigate();
 
-  const [formData, setFormData] = useState({ email: 'coach.rahul@clubsphere.com', password: 'Staff@123' });
+  const [formData, setFormData] = useState({ email: 'SP001', password: 'Staff@123' });
+  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
@@ -19,15 +20,20 @@ export const StaffLoginPage = () => {
     try {
       const data = await login(formData);
       if (!data.roles?.includes('ROLE_STAFF') && !data.roles?.includes('ROLE_ADMIN')) {
-        setError('Access denied: You do not have staff credentials.');
+        setError('Access denied: You do not have staff operational privileges.');
         return;
       }
       navigate('/staff/dashboard');
     } catch (err) {
-      setError(err.response?.data?.message || err.message || 'Staff authentication failed.');
+      setError(err.response?.data?.message || err.message || 'Invalid Staff ID or password. Please verify credentials.');
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleQuickFill = (code) => {
+    setFormData({ email: code, password: 'Staff@123' });
+    setError('');
   };
 
   return (
@@ -36,51 +42,117 @@ export const StaffLoginPage = () => {
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
-      background: 'linear-gradient(135deg, #082f49 0%, #0369a1 50%, #0284c7 100%)',
+      background: 'linear-gradient(135deg, #062b1a 0%, #0F5132 50%, #157347 100%)',
       padding: '2rem 1.5rem',
+      fontFamily: 'Inter, system-ui, -apple-system, sans-serif'
     }}>
       <div style={{
-        maxWidth: '460px',
+        maxWidth: '480px',
         width: '100%',
         backgroundColor: '#ffffff',
-        borderRadius: '20px',
+        borderRadius: '24px',
         padding: '2.5rem',
-        boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.4)',
+        boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.45)',
+        border: '1px solid rgba(255, 255, 255, 0.2)'
       }}>
         {/* Header */}
         <div style={{ textAlign: 'center', marginBottom: '1.75rem' }}>
           <div style={{
-            width: '56px',
-            height: '56px',
+            width: '60px',
+            height: '60px',
             margin: '0 auto 0.75rem',
-            background: 'linear-gradient(135deg, #0284c7, #0369a1)',
-            borderRadius: '16px',
+            background: 'linear-gradient(135deg, #0F5132, #157347)',
+            borderRadius: '18px',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            color: '#ffffff',
-            boxShadow: '0 6px 18px rgba(2, 132, 199, 0.35)',
+            color: '#D4AF37',
+            boxShadow: '0 8px 20px rgba(15, 81, 50, 0.35)',
           }}>
-            <Briefcase size={30} />
+            <Briefcase size={32} />
           </div>
-          <span style={{ fontSize: '0.75rem', fontWeight: 800, color: '#0284c7', letterSpacing: '0.08em', textTransform: 'uppercase' }}>
-            EMPLOYEE & COACH ACCESS
+          <span style={{ fontSize: '0.75rem', fontWeight: 800, color: '#0F5132', letterSpacing: '0.1em', textTransform: 'uppercase', backgroundColor: '#e8f5e9', padding: '4px 12px', borderRadius: '20px' }}>
+            OPERATIONS & DEPARTMENT PORTAL
           </span>
-          <h1 style={{ fontSize: '1.65rem', fontWeight: 900, color: '#0c4a6e', letterSpacing: '-0.02em', margin: '2px 0 0' }}>
-            Staff Operations Portal
+          <h1 style={{ fontSize: '1.75rem', fontWeight: 900, color: '#0F5132', letterSpacing: '-0.02em', margin: '10px 0 2px' }}>
+            Staff Sign In
           </h1>
           <p style={{ color: '#6b7280', fontSize: '0.85rem', marginTop: '4px' }}>
-            Log in to manage shifts, daily attendance & court duties
+            Sign in with your Staff ID (e.g. SP001, FD001) or registered email
           </p>
+        </div>
+
+        {/* Evaluator Quick Department Selection */}
+        <div style={{
+          backgroundColor: '#f8fafc',
+          border: '1px solid #e2e8f0',
+          borderRadius: '14px',
+          padding: '0.85rem',
+          marginBottom: '1.25rem'
+        }}>
+          <div style={{ fontSize: '0.75rem', fontWeight: 700, color: '#475569', marginBottom: '6px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+            <Shield size={14} color="#0F5132" /> Evaluation Department Quick-Fill:
+          </div>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
+            <button
+              type="button"
+              onClick={() => handleQuickFill('SP001')}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '6px',
+                padding: '6px 10px',
+                borderRadius: '8px',
+                border: formData.email === 'SP001' ? '2px solid #0F5132' : '1px solid #cbd5e1',
+                backgroundColor: formData.email === 'SP001' ? '#ecfdf5' : '#ffffff',
+                fontSize: '0.78rem',
+                fontWeight: 700,
+                color: '#0F5132',
+                cursor: 'pointer',
+                textAlign: 'left'
+              }}
+            >
+              <ShoppingBag size={14} />
+              <div>
+                <div>SP001 (Sports)</div>
+                <div style={{ fontSize: '0.68rem', color: '#64748b', fontWeight: 500 }}>Rajesh Kumar</div>
+              </div>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => handleQuickFill('FD001')}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '6px',
+                padding: '6px 10px',
+                borderRadius: '8px',
+                border: formData.email === 'FD001' ? '2px solid #0F5132' : '1px solid #cbd5e1',
+                backgroundColor: formData.email === 'FD001' ? '#ecfdf5' : '#ffffff',
+                fontSize: '0.78rem',
+                fontWeight: 700,
+                color: '#0F5132',
+                cursor: 'pointer',
+                textAlign: 'left'
+              }}
+            >
+              <Coffee size={14} />
+              <div>
+                <div>FD001 (Cafe)</div>
+                <div style={{ fontSize: '0.68rem', color: '#64748b', fontWeight: 500 }}>Meera Joshi</div>
+              </div>
+            </button>
+          </div>
         </div>
 
         {error && (
           <div style={{
-            backgroundColor: '#fee2e2',
-            border: '1px solid #fca5a5',
+            backgroundColor: '#fef2f2',
+            border: '1px solid #fecaca',
             color: '#991b1b',
             padding: '0.75rem 1rem',
-            borderRadius: '10px',
+            borderRadius: '12px',
             fontSize: '0.85rem',
             marginBottom: '1.25rem',
             display: 'flex',
@@ -94,34 +166,73 @@ export const StaffLoginPage = () => {
 
         <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1.15rem' }}>
           <div>
-            <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 700, color: '#374151', marginBottom: '4px' }}>
-              Staff Email / ID
+            <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 700, color: '#374151', marginBottom: '6px' }}>
+              Staff ID or Registered Email
             </label>
             <div style={{ position: 'relative' }}>
               <input
                 type="text"
                 required
+                placeholder="e.g. SP001 or sports.staff@clubsphere.com"
                 value={formData.email}
                 onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                style={{ width: '100%', padding: '0.65rem 0.85rem 0.65rem 2.4rem', borderRadius: '8px', border: '1px solid #d1d5db', fontSize: '0.9rem' }}
+                style={{
+                  width: '100%',
+                  padding: '0.75rem 0.85rem 0.75rem 2.5rem',
+                  borderRadius: '10px',
+                  border: '1px solid #d1d5db',
+                  fontSize: '0.92rem',
+                  outline: 'none',
+                  boxSizing: 'border-box'
+                }}
               />
-              <Mail size={18} style={{ position: 'absolute', left: '0.8rem', top: '50%', transform: 'translateY(-50%)', color: '#9ca3af' }} />
+              <User size={18} style={{ position: 'absolute', left: '0.85rem', top: '50%', transform: 'translateY(-50%)', color: '#9ca3af' }} />
             </div>
           </div>
 
           <div>
-            <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 700, color: '#374151', marginBottom: '4px' }}>
-              Password
-            </label>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
+              <label style={{ fontSize: '0.85rem', fontWeight: 700, color: '#374151' }}>
+                Password
+              </label>
+              <Link to="/forgot-password" style={{ fontSize: '0.78rem', color: '#0F5132', fontWeight: 600, textDecoration: 'none' }}>
+                Forgot Password?
+              </Link>
+            </div>
             <div style={{ position: 'relative' }}>
               <input
-                type="password"
+                type={showPassword ? 'text' : 'password'}
                 required
+                placeholder="Enter your password"
                 value={formData.password}
                 onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                style={{ width: '100%', padding: '0.65rem 0.85rem 0.65rem 2.4rem', borderRadius: '8px', border: '1px solid #d1d5db', fontSize: '0.9rem' }}
+                style={{
+                  width: '100%',
+                  padding: '0.75rem 2.5rem 0.75rem 2.5rem',
+                  borderRadius: '10px',
+                  border: '1px solid #d1d5db',
+                  fontSize: '0.92rem',
+                  outline: 'none',
+                  boxSizing: 'border-box'
+                }}
               />
-              <Lock size={18} style={{ position: 'absolute', left: '0.8rem', top: '50%', transform: 'translateY(-50%)', color: '#9ca3af' }} />
+              <Lock size={18} style={{ position: 'absolute', left: '0.85rem', top: '50%', transform: 'translateY(-50%)', color: '#9ca3af' }} />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                style={{
+                  position: 'absolute',
+                  right: '0.75rem',
+                  top: '50%',
+                  transform: 'translateY(-50%)',
+                  background: 'none',
+                  border: 'none',
+                  cursor: 'pointer',
+                  color: '#9ca3af'
+                }}
+              >
+                {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+              </button>
             </div>
           </div>
 
@@ -129,11 +240,11 @@ export const StaffLoginPage = () => {
             type="submit"
             disabled={loading}
             style={{
-              backgroundColor: '#0284c7',
+              backgroundColor: '#0F5132',
               color: '#ffffff',
               border: 'none',
-              padding: '0.85rem',
-              borderRadius: '10px',
+              padding: '0.9rem',
+              borderRadius: '12px',
               fontWeight: 800,
               fontSize: '0.95rem',
               cursor: 'pointer',
@@ -142,17 +253,25 @@ export const StaffLoginPage = () => {
               justifyContent: 'center',
               gap: '8px',
               marginTop: '0.5rem',
+              boxShadow: '0 4px 12px rgba(15, 81, 50, 0.25)',
+              transition: 'all 0.2s ease'
             }}
           >
-            <UserCheck size={18} />
-            <span>{loading ? 'Validating Staff Duty...' : 'Sign In to Staff Portal'}</span>
+            {loading ? (
+              <span>Authenticating Department...</span>
+            ) : (
+              <>
+                <span>Sign In to Staff Portal</span>
+                <ArrowRight size={18} />
+              </>
+            )}
           </button>
         </form>
 
-        <div style={{ marginTop: '1.5rem', paddingTop: '1.25rem', borderTop: '1px dashed #e5e7eb', textAlign: 'center' }}>
-          <div style={{ fontSize: '0.78rem', color: '#6b7280' }}>
-            Looking for student login?{' '}
-            <Link to="/login" style={{ color: '#0284c7', fontWeight: 700, textDecoration: 'none' }}>
+        <div style={{ marginTop: '1.5rem', paddingTop: '1.25rem', borderTop: '1px dashed #e2e8f0', textAlign: 'center' }}>
+          <div style={{ fontSize: '0.8rem', color: '#64748b' }}>
+            Looking for member or student login?{' '}
+            <Link to="/login" style={{ color: '#0F5132', fontWeight: 700, textDecoration: 'none' }}>
               Student Portal
             </Link>
           </div>
@@ -161,3 +280,5 @@ export const StaffLoginPage = () => {
     </div>
   );
 };
+
+export default StaffLoginPage;

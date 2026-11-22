@@ -21,6 +21,11 @@ public class JwtResponse {
     private List<String> roles;
     private Long memberId;
     private Long employeeId;
+    private String employeeCode;
+    private String departmentCode;
+    private String departmentName;
+    private String designation;
+    private List<String> permissions;
     private String studentId;
     private String trialStatus;
     private Long trialDaysRemaining;

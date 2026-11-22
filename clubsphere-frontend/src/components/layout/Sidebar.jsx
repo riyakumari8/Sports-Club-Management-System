@@ -26,6 +26,7 @@ import {
   ShieldCheck,
   Bell,
   Receipt,
+  RotateCcw,
 } from 'lucide-react';
 
 export const Sidebar = () => {
@@ -130,28 +131,91 @@ export const Sidebar = () => {
         {/* ================= STAFF NAVIGATION ================= */}
         {isStaff && !isAdmin && (
           <>
-            <div className="nav-section-title">Staff Portal</div>
+            <div className="nav-section-title">
+              {user?.departmentCode === 'SPORTS_SHOP'
+                ? 'Sports Shop Operations'
+                : user?.departmentCode === 'FOOD_SHOP'
+                ? 'Cafe & Kitchen Operations'
+                : 'Staff Portal'}
+            </div>
+
             <NavLink to="/staff/dashboard" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}>
-              <LayoutDashboard size={18} /> Staff Dashboard
+              <LayoutDashboard size={18} /> Department Dashboard
             </NavLink>
-            <NavLink to="/staff/profile" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}>
-              <User size={18} /> My Profile
-            </NavLink>
+
+            {/* Sports Shop Staff specific links */}
+            {user?.departmentCode === 'SPORTS_SHOP' && (
+              <>
+                <NavLink to="/staff/sports-orders" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}>
+                  <Briefcase size={18} /> Sports Orders
+                </NavLink>
+                <NavLink to="/staff/sports-counter-sale" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}>
+                  <CreditCard size={18} /> POS Counter Sale
+                </NavLink>
+                <NavLink to="/staff/sports-inventory" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}>
+                  <Layers size={18} /> Stock Inventory
+                </NavLink>
+                <NavLink to="/staff/sports-returns" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}>
+                  <RotateCcw size={18} /> Returns Review
+                </NavLink>
+                <NavLink to="/staff/sports-reports" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}>
+                  <FileText size={18} /> Sales Reports
+                </NavLink>
+              </>
+            )}
+
+            {/* Food Shop Staff specific links */}
+            {user?.departmentCode === 'FOOD_SHOP' && (
+              <>
+                <NavLink to="/staff/food-orders" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}>
+                  <Layers size={18} /> Kitchen Queue (KDS)
+                </NavLink>
+                <NavLink to="/staff/food-billing" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}>
+                  <Receipt size={18} /> Cafe Billing POS
+                </NavLink>
+                <NavLink to="/staff/food-tables" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}>
+                  <Users size={18} /> Table Management
+                </NavLink>
+                <NavLink to="/staff/food-menu" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}>
+                  <Sparkles size={18} /> Menu & Availability
+                </NavLink>
+                <NavLink to="/staff/food-inventory" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}>
+                  <Layers size={18} /> Kitchen Pantry Stock
+                </NavLink>
+                <NavLink to="/staff/food-reports" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}>
+                  <FileText size={18} /> Prep & Sales Reports
+                </NavLink>
+              </>
+            )}
+
+            {/* General Staff duty links */}
+            {user?.departmentCode !== 'SPORTS_SHOP' && user?.departmentCode !== 'FOOD_SHOP' && (
+              <>
+                <div className="nav-section-title">Court Duty</div>
+                <NavLink to="/staff/check-in" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}>
+                  <QrCode size={18} /> Gate & Turnstile Check-In
+                </NavLink>
+                <NavLink to="/staff/bookings" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}>
+                  <Calendar size={18} /> Court Bookings Ledger
+                </NavLink>
+              </>
+            )}
+
+            <div className="nav-section-title">My Employment & Support</div>
             <NavLink to="/staff/attendance" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}>
               <CalendarCheck size={18} /> My Attendance
-            </NavLink>
-            <NavLink to="/staff/leaves" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}>
-              <CalendarX size={18} /> Apply / View Leaves
             </NavLink>
             <NavLink to="/staff/shifts" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}>
               <Clock size={18} /> My Shifts
             </NavLink>
-            <div className="nav-section-title">Court Duty</div>
-            <NavLink to="/staff/check-in" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}>
-              <QrCode size={18} /> Gate & Turnstile Check-In
+            <NavLink to="/staff/leaves" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}>
+              <CalendarX size={18} /> Apply Leaves
             </NavLink>
-            <NavLink to="/staff/bookings" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}>
-              <Calendar size={18} /> Court Bookings Ledger
+            <NavLink to="/staff/support" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}>
+              <MessageSquare size={18} /> Support Desk
+            </NavLink>
+            <NavLink to="/staff/profile" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}>
+              <User size={18} /> Staff Profile
             </NavLink>
             <NavLink to="/notifications" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}>
               <Bell size={18} /> Notifications

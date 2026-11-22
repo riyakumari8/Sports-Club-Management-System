@@ -25,6 +25,7 @@ public class User extends BaseEntity {
     private String email;
 
     @Column(name = "password_hash", nullable = false)
+    @com.fasterxml.jackson.annotation.JsonIgnore
     private String passwordHash;
 
     @Column(name = "full_name", nullable = false, length = 100)

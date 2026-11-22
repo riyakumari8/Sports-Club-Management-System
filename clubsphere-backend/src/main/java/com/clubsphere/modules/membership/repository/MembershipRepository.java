@@ -21,6 +21,9 @@ public interface MembershipRepository extends JpaRepository<Membership, Long> {
     @Query("SELECT m FROM Membership m WHERE (m.membershipNumber = :query OR m.qrCodeToken = :query)")
     Optional<Membership> findByNumberOrQrToken(@Param("query") String query);
 
+    @Query("SELECT m FROM Membership m WHERE LOWER(m.member.user.email) = LOWER(:email) AND m.status = 'ACTIVE'")
+    Optional<Membership> findActiveByMemberEmail(@Param("email") String email);
+
     @Query("SELECT m FROM Membership m WHERE m.status = 'ACTIVE' AND m.endDate < :today")
     List<Membership> findExpiredActiveMemberships(@Param("today") LocalDate today);
 

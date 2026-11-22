@@ -115,14 +115,18 @@ public class SecurityConfig {
                 // Staff endpoints accessible by both ADMIN and STAFF:
                 .requestMatchers(
                     "/api/staff/me",
+                    "/api/staff/dashboard",
+                    "/api/staff/permissions",
+                    "/api/staff/profile",
                     "/api/staff/departments",
-                    "/api/staff/attendance",
-                    "/api/staff/attendance/history",
-                    "/api/staff/leaves/apply",
-                    "/api/staff/leaves/my",
-                    "/api/staff/shifts",
-                    "/api/staff/shifts/schedules"
+                    "/api/staff/attendance/**",
+                    "/api/staff/shifts/**",
+                    "/api/staff/leaves/**",
+                    "/api/staff/support/**"
                 ).hasAnyRole("ADMIN", "STAFF")
+                // Department-isolated staff endpoints (enforced by @PreAuthorize("@staffSecurity.hasDepartment(...)"))
+                .requestMatchers("/api/sports-shop/**").hasAnyRole("ADMIN", "STAFF")
+                .requestMatchers("/api/food-shop/**").hasAnyRole("ADMIN", "STAFF")
                 .requestMatchers(HttpMethod.GET, "/api/staff/*").hasAnyRole("ADMIN", "STAFF")
                 .requestMatchers("/api/staff/**").hasRole("ADMIN")
                 // Memberships

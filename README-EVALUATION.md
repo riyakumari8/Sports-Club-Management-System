@@ -69,16 +69,18 @@ All accounts are pre-seeded in the database with BCrypt-hashed passwords for imm
 
 ---
 
-### B. Staff & Faculty (Across 5 Departments)
-| Name | Email / Username | Password | Department | Primary Role |
-| :--- | :--- | :--- | :--- | :--- |
-| **Coach Rahul Sharma** | `coach.rahul@clubsphere.com` | `Staff@123` | Tennis | Head Tennis Coach, Duty Punch-In & Shift Rosters |
-| **Coach Priya Verma** | `coach.priya@clubsphere.com` | `Staff@123` | Badminton | Badminton Director & Turnstile Gate Check-In |
-| **Coach Amit Kulkarni** | `coach.amit@clubsphere.com` | `Staff@123` | Squash / Gym | Strength & Conditioning Trainer |
-| **Sunil Yadav** | `maintenance.sunil@clubsphere.com` | `Staff@123` | Maintenance | Court Resurfacing & Floodlight Facility Lead |
-| **Neha Gupta** | `frontdesk.neha@clubsphere.com` | `Staff@123` | Operations | Front Desk Attendant & QR Code Scanner Kiosk |
+### B. Staff & Department Accounts (Sports Shop, Cafe, Coaching, Ops)
+| Name | Staff ID / Email | Password | Department | Department Code | Primary Operational Duty |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| **Rajesh Kumar** | `SP001` or `sports.staff@clubsphere.com` | `Staff@123` | Sports Accessories Shop | `SPORTS_SHOP` | Lead Sports Staff: Products, Inventory, Orders, Returns, POS Counter Sales |
+| **Meera Joshi** | `FD001` or `cafe.staff@clubsphere.com` | `Staff@123` | Food Shop / Cafe | `FOOD_SHOP` | Cafe Manager: Kitchen Queue, Table Layout, 86 Items, Cafe POS Billing |
+| **Anita Sharma** | `SP002` or `anita.sports@clubsphere.com` | `Staff@123` | Sports Accessories Shop | `SPORTS_SHOP` | Sports Shop Associate: Inventory adjustments & order fulfillment |
+| **Vikas Rawat** | `FD002` or `vikas.cafe@clubsphere.com` | `Staff@123` | Food Shop / Cafe | `FOOD_SHOP` | Head Cafe Chef: Live Kitchen Display System (KDS) & Cooking SLAs |
+| **Coach Rahul Sharma** | `coach.rahul@clubsphere.com` | `Staff@123` | Coaching & Academy | `COACHING` | Head Tennis Coach & Duty Attendance |
+| **Neha Gupta** | `frontdesk.neha@clubsphere.com` | `Staff@123` | Court Operations | `COURT_OPS` | Front Desk Attendant & QR Code Turnstile Scanner |
 
-> Dedicated Staff Portal URL: `http://localhost:5173/staff/login`
+> Dedicated Staff Portal URL: `http://localhost:5173/staff/login`  
+> *Login supported with Staff ID (e.g. `SP001`, `FD001`) or Email.*
 
 ---
 
@@ -209,6 +211,33 @@ All accounts are pre-seeded in the database with BCrypt-hashed passwords for imm
 - **Student Payment History & Digital Receipts (`/member/payments`):**
   - Strict Authorization: Student accesses only their personal payment records; no club revenue or profit figures are exposed.
   - Official printable Tax Invoice / Receipt modal with ClubSphere GSTIN header, transaction details, amount breakdown, refund credit, and verification QR code.
+
+### 4.8. Staff Dashboard, Department Isolation & POS / Kitchen Operations
+- **Single Staff Login & Role Entry (`/staff/login`):**
+  - Evaluators can log in using their **Staff ID** (`SP001`, `FD001`) or email with password `Staff@123`.
+  - No public registration option; staff accounts must be provisioned by Club Admin.
+- **Backend-Enforced Department Isolation:**
+  - **Sports Shop Staff (`SPORTS_SHOP`):** Manages sports gear, inventory, fulfillment, returns, and POS counter sales. Blocked with **HTTP 403 Forbidden** if attempting to access Cafe/Food data.
+  - **Food Shop / Cafe Staff (`FOOD_SHOP`):** Manages kitchen queue, cafe tables, 86 availability, pantry inventory, and cafe POS billing. Blocked with **HTTP 403 Forbidden** if attempting to access Sports Shop data.
+  - Enforced via Spring Security `@PreAuthorize("@staffSecurity.hasDepartment(authentication, '...')")` and logged directly to `audit_logs`.
+- **Real-time Attendance Clock-In & Clock-Out:**
+  - Instant one-click punch in / punch out on the staff dashboard top bar and `/staff/attendance`.
+  - Records real-time timestamp and auto-calculates shift status.
+- **Sports Shop Staff Module (`/staff/sports-*`):**
+  - **Orders Queue (`/staff/sports-orders`):** Filter by status tabs (`NEW`, `ACCEPTED`, `PACKING`, `READY_FOR_PICKUP`, `COMPLETED`), search, order details drawer, and one-click atomic status progression.
+  - **Stock Inventory Control (`/staff/sports-inventory`):** SKU tracking, low-stock reorder thresholds, modal for recording supplier restocks or damaged write-offs, and complete audit movements trail.
+  - **In-Store POS Counter Sale (`/staff/sports-counter-sale`):** Walk-in checkout terminal, member email lookup with **server-side discount calculation** (Gold 15%, Silver 10%, Junior 5%), atomic stock deduction, and printable tax receipt modal (`RCP-SP-...`).
+  - **Returns & Claims Review (`/staff/sports-returns`):** Review return requests, inspect condition (`SELLABLE`, `DAMAGED`, `DEFECTIVE`), and auto-restock sellable items upon approval.
+  - **Sports Reports (`/staff/sports-reports`):** Today, weekly, monthly, all-time revenue, order volume, and read-only court demo equipment rental feed.
+- **Food Shop & Cafe Staff Module (`/staff/food-*`):**
+  - **Kitchen Display System (`/staff/food-orders`):** Live KDS board with real-time cooking progression (`PENDING` &rarr; `ACCEPTED` &rarr; `PREPARING` &rarr; `READY` &rarr; `COMPLETED`), table badges, and boxed kitchen notes.
+  - **Live Table Management (`/staff/food-tables`):** Visual interactive floor grid of tables 1 to 8 with color-coded status badges (`AVAILABLE`, `OCCUPIED`, `CLEANING`, `RESERVED`) and instant status toggle. Completing an order automatically transitions the table to `CLEANING`.
+  - **Menu & 86 Item Availability (`/staff/food-menu`):** Instant 86 toggle to mark out-of-stock items as unavailable, plus price and kitchen prep-time editor.
+  - **Cafe POS Billing Counter (`/staff/food-billing`):** Table tab & walk-in POS billing, member discount verification (Gold 10%, Silver 5%), and KOT/bill receipt popup.
+  - **Kitchen Ingredients Inventory (`/staff/food-inventory`):** Pantry stock tracking, min-threshold alerts, restock & wastage logging.
+  - **Cafe & Preparation Reports (`/staff/food-reports`):** Daily sales, kitchen cooking SLAs (average prep time vs 15-minute target), and peak ordering hours.
+- **Staff Operational Support Desk (`/staff/support`):**
+  - Staff members can log operational tickets (equipment faults, POS printer jams, shift queries) directly to club administration.
 
 ---
 

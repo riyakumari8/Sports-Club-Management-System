@@ -52,10 +52,21 @@ public class AuthService {
     private final SignupOtpRepository signupOtpRepository;
     private final PasswordResetTokenRepository passwordResetTokenRepository;
     private final NotificationService notificationService;
+    private final com.clubsphere.modules.staff.repository.StaffPermissionRepository staffPermissionRepository;
 
     @Transactional
     public JwtResponse login(LoginRequest loginRequest) {
-        String email = loginRequest.getEmail().trim().toLowerCase();
+        String loginInput = loginRequest.getEmail().trim();
+        String email = loginInput.toLowerCase();
+
+        // Support staff login with Staff ID / Employee Code (e.g. SP001, FD001, CS-EMP-001)
+        if (!loginInput.contains("@")) {
+            Optional<Employee> empByCode = employeeRepository.findByEmployeeCode(loginInput.toUpperCase());
+            if (empByCode.isPresent() && empByCode.get().getUser() != null) {
+                email = empByCode.get().getUser().getEmail();
+            }
+        }
+
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(email, loginRequest.getPassword())
         );
@@ -75,9 +86,23 @@ public class AuthService {
         }
 
         Long employeeId = null;
+        String employeeCode = null;
+        String departmentCode = null;
+        String departmentName = null;
+        String designation = null;
+        List<String> permissions = new ArrayList<>();
+
         Optional<Employee> empOpt = employeeRepository.findByUserId(userDetails.getId());
         if (empOpt.isPresent()) {
-            employeeId = empOpt.get().getId();
+            Employee emp = empOpt.get();
+            employeeId = emp.getId();
+            employeeCode = emp.getEmployeeCode();
+            designation = emp.getDesignation();
+            if (emp.getDepartment() != null) {
+                departmentCode = emp.getDepartment().getCode();
+                departmentName = emp.getDepartment().getName();
+            }
+            permissions = staffPermissionRepository.findPermissionCodesByEmployeeId(emp.getId());
         }
 
         User user = userRepository.findById(userDetails.getId()).orElse(null);
@@ -106,6 +131,11 @@ public class AuthService {
                 .roles(roles)
                 .memberId(memberId)
                 .employeeId(employeeId)
+                .employeeCode(employeeCode)
+                .departmentCode(departmentCode)
+                .departmentName(departmentName)
+                .designation(designation)
+                .permissions(permissions)
                 .studentId(studentId)
                 .trialStatus(trialStatus)
                 .trialDaysRemaining(trialDaysRemaining)

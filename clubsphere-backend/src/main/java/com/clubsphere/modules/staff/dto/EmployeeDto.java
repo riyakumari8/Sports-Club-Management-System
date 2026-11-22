@@ -24,9 +24,13 @@ public class EmployeeDto {
     private String gender;
     private Integer departmentId;
     private String departmentName;
+    private String departmentCode;
     private String designation;
     private LocalDate joiningDate;
     private String employmentStatus;
     private String employmentType;
     private BigDecimal baseSalary;
+    private String emergencyContact;
+    private String profilePicture;
+    private java.util.List<String> permissions;
 }

@@ -25,6 +25,10 @@ spring:
         jdbc:
           time_zone: UTC
 
+  jackson:
+    serialization:
+      fail-on-empty-beans: false
+
 # Security / JWT configuration
 clubsphere:
   app:
